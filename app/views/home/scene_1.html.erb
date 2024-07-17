@@ -24,11 +24,11 @@
         </div>
 
         <div class="input-window">
-                <form method="POST" action="exp_7.cgi">
-                    <textarea id="message-input">
-                        返答を入力してください
-                    </textarea>
-                </form>
+            <canvas id="InputWindowCanvas" width="858px" height="140px"></canvas>
+            <form class="input_form">
+                <textarea id="message-input" placeholder='返答を記入してください' required></textarea>
+                <%# <button id="message-submit_buttom">返答</button> %>
+            </form>
         </div>
     </div>
 
