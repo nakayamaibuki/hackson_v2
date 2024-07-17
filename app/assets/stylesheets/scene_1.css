@@ -1,0 +1,42 @@
+/* styles.css */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: 80vw;
+    height: 45vw; /* 16:9 の比率 */
+    max-width: 1280px;
+    max-height: 720px;
+}
+
+.canvas-wrapper canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#message-input {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 50px;
+    font-size: 16px;
+    z-index: 10; /* canvasの上に表示 */
+    background: rgba(255, 255, 255, 0.8); /* 背景色を半透明に */
+    border: none;
+    padding: 10px;
+    box-sizing: border-box;
+}
