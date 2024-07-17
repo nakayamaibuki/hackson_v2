@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<%= stylesheet_link_tag 'scene_1', media: 'all', 'data-turbolinks-track': 'reload'%>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テキスト入力画面</title>
+</head>
+
+<body>
+    <div class="canvas-wrapper">
+        <div class = "background">
+            <canvas id="BackgroundCanvas" width="1280px" height="580px" style="background-color: #D9D9D9;"></canvas>
+        </div>
+
+        <div class = "gameBackground">
+            <canvas id="GameBackgroundCanvas" width="1280px" height="580px"></canvas>
+        </div>
+
+        <div class="message-window">
+            <canvas id="MessageWindowCanvas" width="1280px" height="580px"></canvas>
+            <div class="message-box">メッセージウィンドウ</div>
+        </div>
+
+        <button class="start-button" id="startButton">はじめから</button>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var background_canvas = document.getElementById('BackgroundCanvas');
+            var game_background_canvas = document.getElementById('GameBackgroundCanvas');
+            var message_window_canvas = document.getElementById('MessageWindowCanvas');
+            var input_window_canvas = document.getElementById('InputWindowCanvas');
+
+            if (background_canvas) {
+                var background_ctx = background_canvas.getContext('2d');
+
+                // // Canvasのサイズを設定
+                // background_canvas.width = background_canvas.offsetWidth;
+                // background_canvas.height = background_canvas.offsetHeight;
+
+                // 塗りつぶす
+                background_ctx.fillStyle = "Orange";        // 塗りつぶす色
+                // rgb(217,217,217)
+                background_ctx.fillRect(0, 0, background_canvas, background_canvas);    // 描画
+            }
+
+            if (game_background_canvas) {
+                var game_background_ctx = game_background_canvas.getContext('2d');
+
+                // Canvasのサイズを設定
+                game_background_canvas.width = game_background_canvas.offsetWidth;
+                game_background_canvas.height = game_background_canvas.offsetHeight;
+
+                // 背景画像を描画
+                var game_background_img = new Image();
+                game_background_img.src = '<%= asset_path("/title.png") %>';  // 背景画像のパスを指定
+                game_background_img.onload = function() {
+                    game_background_ctx.drawImage(game_background_img, 189, 36, 901, 507);
+                }
+            }
+
+            if (message_window_canvas) {
+                var message_window_ctx = message_window_canvas.getContext('2d');
+
+                // Canvasのサイズを設定
+                message_window_canvas.width = message_window_canvas.offsetWidth;
+                message_window_canvas.height = message_window_canvas.offsetHeight;
+
+                // 背景画像を描画
+                var message_window_img = new Image();
+                message_window_img.src = '<%= asset_path("/messagewindow.png") %>';  // 背景画像のパスを指定
+                message_window_img.onload = function() {
+                    message_window_ctx.drawImage(message_window_img, 279, 365, 758, 178);
+                    
+                    var messages = ["恋愛面接", "～恋と内定の行方～"];
+                    message_window_ctx.font = "40px SeoulNamsan";
+                    message_window_ctx.fillStyle = "black";
+
+                    // 各行の位置を計算
+                    var textHeight = 40; // フォントサイズに合わせて調整
+                    var lineHeight = textHeight + 10; // 行間を調整
+
+                    // テキストの幅を計算し、各行の中心位置を計算
+                    messages.forEach((message, index) => {
+                        var textMetrics = message_window_ctx.measureText(message);
+                        var textWidth = textMetrics.width;
+
+                        var x = 279 + (758 / 2) - (textWidth / 2);
+                        var y = 365 + (178 / 2) - ((messages.length - 1) * lineHeight / 2) + (index * lineHeight) + textHeight / 2;
+
+                        message_window_ctx.fillText(message, x, y);
+                    });
+                }
+
+                // document.getElementById('message-input').addEventListener('input', function() {
+                //     document.querySelector('.message-box').innerText = this.value || 'メッセージウィンドウ';
+                // });
+            }
+
+            if (input_window_canvas) {
+                var input_window_ctx = input_window_canvas.getContext('2d');
+
+                // input_window_canvasのサイズを設定
+                input_window_canvas.width = input_window_canvas.offsetWidth;
+                input_window_canvas.height = input_window_canvas.offsetHeight;
+
+                var message_windnow_img = new Image();
+                message_window_img.src = '<%= asset_path("/messagewindow.png") %>';  // 背景画像のパスを指定
+                message_window_img.onload = function() {
+                    message_window_ctx.drawImage(message_window_img, 279, 365, 758, 178);
+                    
+                    var message = "Test";
+                    message_window_ctx.font = "20px serif";
+                    message_window_ctx.fillStyle = "black";
+                    message_window_ctx.fillText(message, 300, 400);
+                }
+                document.getElementById('message-input').addEventListener('input', function() {
+                    document.querySelector('.message-box').innerText = this.value || 'メッセージウィンドウ';
+                });
+            }
+
+        });
+    </script>
+</body>
+
+</html>
