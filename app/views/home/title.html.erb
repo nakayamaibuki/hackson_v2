@@ -121,7 +121,9 @@
                     document.querySelector('.message-box').innerText = this.value || 'メッセージウィンドウ';
                 });
             }
-
+            startButton.addEventListener('click', () => {
+                window.location.href = "/home/scene_1";
+            });
         });
     </script>
 </body>
