@@ -5,40 +5,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>テキスト入力画面</title>
+    <title>恋愛面接</title>
 </head>
 
 <body>
-    <div class="canvas-wrapper">
+    <div class="canvas_wrapper_scene_1">
         <div class = "background">
-            <canvas id="BackgroundCanvas" width="1280px" height="580px" style="background-color: #D9D9D9;"></canvas>
+            <canvas id="BackgroundCanvas" width="921px" height="519px" style="background-color: #D9D9D9;"></canvas>
         </div>
 
         <div class = "gameBackground">
-            <canvas id="GameBackgroundCanvas" width="1280px" height="580px"></canvas>
+            <canvas id="GameBackgroundCanvas" width="921px" height="519px"></canvas>
         </div>
 
         <div class = "character">
-            <canvas id="CharacterCanvas" width="1280px" height="580px"></canvas>
+            <canvas id="CharacterCanvas_scene_1" width="921px" height="519px"></canvas>
         </div>
 
         <div class="message-window">
-            <canvas id="MessageWindowCanvas" width="1280px" height="580px"></canvas>
+            <canvas id="MessageWindowCanvas" width="921px" height="519px"></canvas>
             <div class="message-box">メッセージウィンドウ</div>
         </div>
 
-        <div class="input-window">
-            <canvas id="InputWindowCanvas" width="858px" height="140px"></canvas>
-            <form class="input_form" id="InputForm">
-                <input id="message-input" placeholder='返答を記入してください' required>
-            </form>
+        <div class="input_window_scene_1">
 
-            <%# <form class="anser_buttom" id="clicButton">
-                <button id="select_1">選択肢1</button>
-                <button id="select_2">選択肢2</button> 
-            </form> %>
+                <%# <div class="hidden" id="InputForm_element"> %>
+                <form class="input_form" id="InputForm">
+                    <input id="message_input" placeholder='返答を記入してください' required>
+                    <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
+                </form>
+                <%# </div> %>
+
+                <%# <div lass="hidden" id="Inputbuttom_element"> %>
+                <form class="clicbutom" id="clicButton">
+                    <button id="select_1">選択肢1</button>
+                    <button id="select_2">選択肢2</button> 
+                </form>
+                <%# </div> %>
         </div>
-
 
     </div>
 
@@ -46,17 +50,42 @@
         document.addEventListener('DOMContentLoaded', () => {
             var background_canvas = document.getElementById('BackgroundCanvas');
             var game_background_canvas = document.getElementById('GameBackgroundCanvas');
-            var character_canvas = document.getElementById('CharacterCanvas');
+            var character_canvas = document.getElementById('CharacterCanvas_scene_1');
             var message_window_canvas = document.getElementById('MessageWindowCanvas');
-            var input_window_canvas = document.getElementById('InputWindowCanvas');
+            var input_window_canvas = document.getElementById('InputWindowCanvas_scene_1');
+            var input_condition = 0;
 
-            function drawImageOnCanvas(canvas, imageSrc, x, y) {
+            const  input_txet = document.getElementById('InputForm') 
+            const  input_button = document.getElementById('clicButton') 
+            input_txet.style.visibility = 'hidden';
+
+            var imagePaths = [
+                                    '<%= asset_path("/girl_normal.png") %>',
+                                    '<%= asset_path("/girl_smile.png") %>',
+                                    '<%= asset_path("/girl_angry.png") %>'
+            ];
+
+            // if (input_condition == 0) {
+            //     const  input_txet = document.getElementById('InputForm') 
+            //     iinput_txet.style.visibility = 'hidden';
+            // }
+            // else if (input_condition == 1) {
+            //     const  input_button = document.getElementById('clicButton')
+            //     input_button.style.visibility = 'hidden';
+            // }
+
+            // if (input_condition == 1) {
+            //     const  input_button = document.getElementById('clicButton')
+            //     input_button.style.visibility = 'hidden';
+            // }
+
+            function drawImageOnCanvas(canvas, imageSrc, x, y, width, height) {
                 var ctx = canvas.getContext('2d');
                 var img = new Image();
                 img.src = imageSrc;
                 img.onload = function() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, x, y);
+                    ctx.drawImage(img, x, y, width, height);
                 }
             }
 
@@ -73,9 +102,9 @@
 
                 // 背景画像を描画
                 var game_background_img = new Image();
-                game_background_img.src = '<%= asset_path("/scean_1.png") %>';  // 背景画像のパスを指定
+                game_background_img.src = '<%= asset_path("/game_background_scene_1_v2.png") %>';  // 背景画像のパスを指定
                 game_background_img.onload = function() {
-                    game_background_ctx.drawImage(game_background_img, 189, 36, 901, 507);
+                    game_background_ctx.drawImage(game_background_img, 136, 26);
                 }
             }
 
@@ -88,34 +117,80 @@
 
                 // 背景画像を描画
                 var message_window_img = new Image();
-                message_window_img.src = '<%= asset_path("/messagewindow.png") %>';  // 背景画像のパスを指定
+                message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';  // 背景画像のパスを指定
                 message_window_img.onload = function() {
-                    message_window_ctx.drawImage(message_window_img, 279, 365, 758, 178);
+                    message_window_ctx.drawImage(message_window_img, 201, 263);
                 }
             }
 
             if (input_window_canvas) {
                 var input_window_ctx = input_window_canvas.getContext('2d');
 
-                // input_window_canvasのサイズを設定
+                // Canvasのサイズを設定
                 input_window_canvas.width = input_window_canvas.offsetWidth;
                 input_window_canvas.height = input_window_canvas.offsetHeight;
+
+                // 背景画像を描画
+                var input_window_img = new Image();
+                input_window_img.src = '<%= asset_path("/inputwindow.png") %>';  // 背景画像のパスを指定
+                input_window_img.onload = function() {
+                    input_window_ctx.drawImage(input_window_img, 201, 412);
+                }
+
             }
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
                 event.preventDefault();
-                var userInput = document.getElementById('message-input').value;
+                var userInput = document.getElementById('message_input').value;
                 var form = document.getElementById('InputForm');
                 
-                // 画像を変更する処理
-                if (game_background_canvas) {
-                    var game_background_ctx = game_background_canvas.getContext('2d');
+                // // 画像を変更する処理
+                // if (game_background_canvas) {
+                //     var game_background_ctx = game_background_canvas.getContext('2d');
+                //     game_background_img.src = '<%= asset_path("/game_background_scene2.png") %>'; // 変更後の画像パス
+                //     game_background_img.onload = function() {
+                //         game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                //         game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                //     }
+                // }
+
+                if (character_canvas) {
+                    var character_ctx = character_canvas.getContext('2d');
+                    // 配列からランダムに画像パスを取得
+                    var randomIndex = Math.floor(Math.random() * imagePaths.length);
+                    var selectedImagePath = imagePaths[randomIndex];
+
+                    // Canvasのサイズを設定
+                    character_canvas.width = character_canvas.offsetWidth;
+                    character_canvas.height = character_canvas.offsetHeight;
+
+                    // 背景画像を描画
+                    var character_img = new Image();
+                    character_img.src = selectedImagePath;  // 背景画像のパスを指定
+                    character_img.onload = function() {
+                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    }
+                }
+
+                form.reset();
+
+            });
+
+            document.getElementById('select_1').addEventListener('click', function(event) {
+                event.preventDefault();
+                // 配列からランダムに画像パスを取得
+                var randomIndex = Math.floor(Math.random() * imagePaths.length);
+                var selectedImagePath = imagePaths[randomIndex];
+
+                input_button.style.visibility = 'hidden';
+                input_txet.style.visibility = 'visible';
+
+                var game_background_ctx = game_background_canvas.getContext('2d');
                     game_background_img.src = '<%= asset_path("/game_background_scene2.png") %>'; // 変更後の画像パス
                     game_background_img.onload = function() {
                         game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-                        game_background_ctx.drawImage(game_background_img, 189, 36, 901, 507);
+                        game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
                     }
-                }
 
                 if (character_canvas) {
                     var character_ctx = character_canvas.getContext('2d');
@@ -126,21 +201,12 @@
 
                     // 背景画像を描画
                     var character_img = new Image();
-                    character_img.src = '<%= asset_path("/girl_normal.png") %>';  // 背景画像のパスを指定
+                    character_img.src = selectedImagePath;  // 背景画像のパスを指定
                     character_img.onload = function() {
-                        character_ctx.drawImage(character_img, 470, 60, 358, 358);
+                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
                     }
                 }
-
-                form.reset();
-
             });
-
-            // document.getElementById('select_1').addEventListener('click', function(event) {
-            //     event.preventDefault();
-            //     drawImageOnCanvas(game_background_canvas, '<%= asset_path("/game_background_scene2.png") %>', 189, 36);
-            //     drawImageOnCanvas(character_canvas, '<%= asset_path("/girl_normal.png") %>', 470, 60);
-            // });
         });
     </script>
 </body>
