@@ -91,6 +91,14 @@
                 }
             }
 
+            function change_image (val) {
+                itemInstance.setValue(val);
+                itemInstance.change_game_background(val);
+                itemInstance.change_charcter_window(val);
+                itemInstance.change_message_window(val);
+                itemInstance.change_input_window(val);
+            }
+
             var Item = function (val) {
                 this._scene_count = val;
             }
@@ -105,31 +113,19 @@
             document.getElementById('start_Button').addEventListener('click', function(event) {
                 event.preventDefault();
                 scene_count++;
-                itemInstance.setValue(scene_count);
-                itemInstance.change_game_background(scene_count);
-                itemInstance.change_input_window(scene_count);
-                itemInstance.change_message_window(scene_count);
-                itemInstance.change_charcter_window(scene_count);
+                change_image(scene_count);
             });
 
             document.getElementById('select_1').addEventListener('click', function(event) {
                 event.preventDefault();
                 scene_count++;
-                itemInstance.setValue(scene_count);
-                itemInstance.change_game_background(scene_count);
-                itemInstance.change_input_window(scene_count);
-                itemInstance.change_message_window(scene_count);
-                itemInstance.change_charcter_window(scene_count);
+                change_image(scene_count);
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 scene_count++;
-                itemInstance.setValue(scene_count);
-                itemInstance.change_game_background(scene_count);
-                itemInstance.change_input_window(scene_count);
-                itemInstance.change_message_window(scene_count);
-                itemInstance.change_charcter_window(scene_count);
+                change_image(scene_count);
             });
 
             if (background_canvas) {
@@ -221,13 +217,98 @@
 
             // テキスト入力無し
             if (message_window_canvas) {
-                var message_window_ctx = message_window_canvas.getContext('2d');
+                function wrapText(context, text, maxWidth) {
+                    var lines = [];
+                    var currentLine = '';
+                    for (var i = 0; i < text.length; i++) {
+                        var char = text[i];
+                        var testLine = currentLine + char;
+                        var width = context.measureText(testLine).width;
+                        if (width > maxWidth && currentLine !== '') {
+                            lines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    lines.push(currentLine);
+                    return lines;
+                }
+                
+                function displayMessage(name, message) {
+                    message_window_ctx.font = '20px sans-serif';
+                    message_window_ctx.fillStyle = 'black';
+                    var textHeight = 20;
 
+                    message_window_ctx.fillText(name, 200 + 20, 249 + 40);
+
+                    message_window_ctx.font = "16px SeoulNamsan";
+                    var maxWidth = 550 - 40;
+                    var wrappedText = wrapText(message_window_ctx, message, maxWidth);
+
+                    var charIndex = 0;
+                    var lineIndex = 0;
+
+                    var x = 200 + 15;
+                    var y = 249 + 69;
+
+                    function drawNextChar() {
+                        if (lineIndex < wrappedText.length) {
+                            if (charIndex < wrappedText[lineIndex].length) {
+                                message_window_ctx.fillText(wrappedText[lineIndex][charIndex], x, y);
+                                charIndex++;
+                                x += message_window_ctx.measureText(wrappedText[lineIndex][charIndex - 1]).width;
+                                setTimeout(drawNextChar, 30); // 30ミリ秒ごとに次の文字を描画
+                            } else {
+                                charIndex = 0;
+                                lineIndex++;
+                                x = 201 + 15;
+                                y += textHeight;
+                                setTimeout(drawNextChar, 30);
+                            }
+                        }
+                    }
+                    drawNextChar();
+                }
+
+                function fetchMessages() {
+                    fetch('/huckson_test_story.txt')
+                        .then(response => response.text())
+                        .then(data => {
+                            const lines = data.split('\n');
+                            lines.forEach(line => {
+                                const [name, message] = line.split('：');
+                                text_messages.push({ name, message });
+                            });
+                            displayMessage(text_messages[currentMessageIndex].name, text_messages[currentMessageIndex].message);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+
+                function simulateEnterKey() {
+                    const event = new KeyboardEvent('keydown', {
+                        key: 'Enter',
+                        keyCode: 13,
+                        code: 'Enter',
+                        which: 13,
+                        shiftKey: false,
+                        ctrlKey: false,
+                        metaKey: false
+                    });
+                    document.dispatchEvent(event);
+                }
+
+                var message_window_ctx = message_window_canvas.getContext('2d');
                 // Canvasのサイズを設定
                 message_window_canvas.width = message_window_canvas.offsetWidth;
                 message_window_canvas.height = message_window_canvas.offsetHeight;
 
-                var messages = ["恋愛面接", "～恋と内定の行方～"];
+                let text_messages = [];
+                let currentMessageIndex = 0;
+                let enterFlag = false;
+                var title_messages = ["恋愛面接", "～恋と内定の行方～"];
                 message_window_ctx.fillStyle = "rgb(213, 67, 216)";
 
                 // 各行の位置を計算
@@ -235,24 +316,24 @@
                 var lineHeight = textHeight + 10; // 行間を調整
 
                 // テキストの幅を計算し、各行の中心位置を計算
-                messages.forEach((message, index) => {
+                title_messages.forEach((title_message, index) => {
                     if (index === 0){
                         message_window_ctx.font = "80px SeoulNamsan";
-                        var textMetrics = message_window_ctx.measureText(message);
+                        var textMetrics = message_window_ctx.measureText(title_message);
                         var textWidth = textMetrics.width;                    
                         var x = 300 
-                        var y = 330 - ((messages.length - 1) * lineHeight / 2) + (index * lineHeight) + textHeight / 2;
+                        var y = 330 - ((title_messages.length - 1) * lineHeight / 2) + (index * lineHeight) + textHeight / 2;
                     
-                        message_window_ctx.fillText(message, x, y);
+                        message_window_ctx.fillText(title_message, x, y);
                     }
                     else if (index === 1){
                         message_window_ctx.font = "48px SeoulNamsan";
-                        var textMetrics = message_window_ctx.measureText(message);
+                        var textMetrics = message_window_ctx.measureText(title_message);
                         var textWidth = textMetrics.width;                    
                         var x = 300 - (textWidth / 8);
-                        var y = 330 - ((messages.length - 1) * lineHeight / 2) + (index * lineHeight) + textHeight / 2;
+                        var y = 330 - ((title_messages.length - 1) * lineHeight / 2) + (index * lineHeight) + textHeight / 2;
                     
-                        message_window_ctx.fillText(message, x, y);
+                        message_window_ctx.fillText(title_message, x, y);
                     }
                     
                 });
@@ -268,7 +349,26 @@
                         message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';  // 背景画像のパスを指定
                         message_window_img.onload = function() {
                             message_window_ctx.drawImage(message_window_img, 201, 263);
+                            fetchMessages()
                         }
+
+                        document.addEventListener('keydown', function (event) {
+                            if (event.key === 'Enter') {
+                                enterFlag = !enterFlag;
+                                currentMessageIndex++;
+                                message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
+                                message_window_ctx.drawImage(message_window_img, 201, 263);
+
+                                if (currentMessageIndex < text_messages.length) {
+                                    fetchMessages(text_messages[currentMessageIndex].name, text_messages[currentMessageIndex].message);
+                                } else {
+                                    console.log('No more messages.');
+                                }
+                                if (enterFlag) {
+                                    simulateEnterKey();
+                                }
+                            }
+                        });
                     }
                     else if (scene_count === 2) {
                     }
@@ -277,80 +377,6 @@
                     }
                 }
             }
-
-            // if (message_window_canvas) {
-            //     var message_window_ctx = message_window_canvas.getContext('2d');
-            //     message_window_canvas.width = message_window_canvas.offsetWidth;
-            //     message_window_canvas.height = message_window_canvas.offsetHeight;
-            //     var message_window_img = new Image();
-            //     message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';
-            //     message_window_img.onload = function() {
-            //         message_window_ctx.drawImage(message_window_img, 201, 263);
-            //         /*テスト用のメッセージを描画*/
-            //         var names = ["李 光","高山 圭","山本 大輔", "佐藤　美咲子", "田中　陽子美"];
-            //         var messages = ["李光は静かで知識豊富な青年で、常に冷静な判断を下すことができます。彼の趣味は読書と天文学で、特に星空を観察するのが好きです。社交的ではないが、親しい友人とは深い絆を持ち、信頼される存在です。",
-            //                         "高山圭は明るく社交的な女性で、誰とでもすぐに打ち解けることができます。趣味はダンスと映画鑑賞で、新しいものに挑戦することが好きです。彼女の元気な性格は周囲の人々にポジティブな影響を与えます。",
-            //                         "山本大輔は穏やかで優しい青年で、どんな状況でも冷静さを保ちます。趣味はガーデニングと写真撮影で、自然を愛し、その美しさをカメラに収めるのが好きです。人との対話が得意で、周囲から信頼されています。",
-            //                         "佐藤美咲子は活発で元気な女性で、周囲を明るくする存在です。趣味はスポーツと音楽鑑賞で、特にチームスポーツを楽しんでいます。リーダーシップがあり、どんな困難にも前向きに取り組む姿勢が評価されています。",
-            //                         "田中陽子美は真面目で誠実な女性で、常に周囲の人々を気遣います。趣味は料理と読書で、新しいレシピを試すのが好きです。彼女の優しさと思いやりのある性格は、多くの人々から尊敬されています。"];
-                    
-            //         message_window_ctx.font = "20px SeoulNamsan";
-            //         message_window_ctx.fillStyle = "black";
-            //         var textHeight = 20;
-            //         var randNum = Math.floor(Math.random() * names.length);/*ランダムで名前を表示*/
-            //         message_window_ctx.fillText(names[randNum], 200 + 20, 249 + 40);
-
-            //         message_window_ctx.font = "16px SeoulNamsan";
-            //         var maxWidth = 550 - 40; // メッセージウィンドウの幅から左右のマージンを引いた値(メッセージ長の最大値)
-            //         var randNum = Math.floor(Math.random() * messages.length); /*ランダムでメッセージを表示*/
-            //         var wrappedText = wrapText(message_window_ctx, messages[randNum], maxWidth);
-                    
-            //         // テキストを一文字ずつ描画
-            //         var charIndex = 0;
-            //         var lineIndex = 0;
-
-            //         /*テキストメッセージの描画位置*/
-            //         var x = 200 + 15;
-            //         var y = 249 + 69;
-
-            //         function drawNextChar() {
-            //             if (lineIndex < wrappedText.length) {
-            //                 if (charIndex < wrappedText[lineIndex].length) {
-            //                     message_window_ctx.fillText(wrappedText[lineIndex][charIndex], x, y);
-            //                     charIndex++;
-            //                     x += message_window_ctx.measureText(wrappedText[lineIndex][charIndex - 1]).width;
-            //                     setTimeout(drawNextChar, 30); // 30ミリ秒ごとに次の文字を描画
-            //                 } else {
-            //                     charIndex = 0;
-            //                     lineIndex++;
-            //                     x = 201 + 15;
-            //                     y += textHeight;
-            //                     setTimeout(drawNextChar, 30);
-            //                 }
-            //             }
-            //         }
-
-            //         drawNextChar();
-            //     }
-
-            //     function wrapText(context, text, maxWidth) {
-            //         var lines = [];
-            //         var currentLine = '';
-            //         for (var i = 0; i < text.length; i++) {
-            //             var char = text[i];
-            //             var testLine = currentLine + char;
-            //             var width = context.measureText(testLine).width;
-            //             if (width > maxWidth && currentLine !== '') {
-            //                 lines.push(currentLine);
-            //                 currentLine = char;
-            //             } else {
-            //                 currentLine = testLine;
-            //             }
-            //         }
-            //         lines.push(currentLine);
-            //         return lines;
-            //     }
-            // }
 
             if (input_window_canvas) {
                 var input_window_ctx = input_window_canvas.getContext('2d');
