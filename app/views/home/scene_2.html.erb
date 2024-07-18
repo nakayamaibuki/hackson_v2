@@ -181,6 +181,9 @@
                 }
             });
 
+            let messages = [];
+            let currentMessageIndex = 0;
+
             function fetchMessages() {
                 fetch('/huckson_test_story.txt')
                     .then(response => response.text())
@@ -188,8 +191,9 @@
                         const lines = data.split('\n');
                         lines.forEach(line => {
                             const [name, message] = line.split('：');
-                            displayMessage(name, message);
+                            messages.push({ name, message });
                         });
+                        displayMessage(messages[currentMessageIndex].name, messages[currentMessageIndex].message);
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -199,6 +203,7 @@
             function displayMessage(name, message) {
                 var message_window_ctx = message_window_canvas.getContext('2d');
                 
+
                 message_window_ctx.font = '20px sans-serif';
                 message_window_ctx.fillStyle = 'black';
                 var textHeight = 20;
@@ -231,7 +236,6 @@
                         }
                     }
                 }
-
                 drawNextChar();
             }
 
@@ -253,16 +257,37 @@
                 return lines;
             }
 
+            let enterFlag = false;
+
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Enter') {
+                    enterFlag = !enterFlag;
                     currentMessageIndex++;
+                    message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
+                    message_window_ctx.drawImage(message_window_img, 201, 263);
                     if (currentMessageIndex < messages.length) {
-                        displayMessage(messages[currentMessageIndex].name, messages[currentMessageIndex].message);
+                        fetchMessages(messages[currentMessageIndex].name, messages[currentMessageIndex].message);
                     } else {
                         console.log('No more messages.');
                     }
+                    if (enterFlag) {
+                        simulateEnterKey();
+                    }
                 }
             });
+
+            function simulateEnterKey() {
+            const event = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                keyCode: 13,
+                code: 'Enter',
+                which: 13,
+                shiftKey: false,
+                ctrlKey: false,
+                metaKey: false
+            });
+            document.dispatchEvent(event);
+        }
         });
     </script>
 </body>
