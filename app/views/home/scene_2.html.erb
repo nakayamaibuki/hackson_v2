@@ -25,8 +25,8 @@
 
         <div class="input-window">
             <canvas id="InputWindowCanvas" width="858px" height="140px"></canvas>
-            <form class="input_form">
-                <textarea id="message-input" placeholder='返答を記入してください' required></textarea>
+            <form class="input_form" id="InputForm">
+                <input id="message-input" placeholder='返答を記入してください' required>
                </form>
         </div>
     </div>
@@ -35,22 +35,24 @@
         document.addEventListener('DOMContentLoaded', () => {
             var background_canvas = document.getElementById('BackgroundCanvas');
             var game_background_canvas = document.getElementById('GameBackgroundCanvas');
+            var character_canvas = document.getElementById('CharacterCanvas');
             var message_window_canvas = document.getElementById('MessageWindowCanvas');
             var input_window_canvas = document.getElementById('InputWindowCanvas');
-
+            /*画像を描画する関数*/
+            function drawImageOnCanvas(canvas, imageSrc, x, y) {
+                var ctx = canvas.getContext('2d');
+                var img = new Image();
+                img.src = imageSrc;
+                img.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, x, y);
+                }
+            }
+            /*各キャンバスのコンテキストを取得*/
             if (background_canvas) {
                 var background_ctx = background_canvas.getContext('2d');
-
-                // // Canvasのサイズを設定
-                // background_canvas.width = background_canvas.offsetWidth;
-                // background_canvas.height = background_canvas.offsetHeight;
-
-                // 塗りつぶす
-                background_ctx.fillStyle = "Orange";        // 塗りつぶす色
-                // rgb(217,217,217)
-                background_ctx.fillRect(0, 0, background_canvas, background_canvas);    // 描画
             }
-
+            /*ゲーム背景画像の描画*/
             if (game_background_canvas) {
                 var game_background_ctx = game_background_canvas.getContext('2d');
 
@@ -65,7 +67,7 @@
                     game_background_ctx.drawImage(game_background_img, 189, 36, 901, 507);
                 }
             }
-
+            /*メッセージウィンドウの描画*/
             if (message_window_canvas) {
                 var message_window_ctx = message_window_canvas.getContext('2d');
                 message_window_canvas.width = message_window_canvas.offsetWidth;
@@ -118,7 +120,7 @@
 
                     drawNextChar();
                 }
-
+                /*テキストを折り返す関数*/
                 function wrapText(context, text, maxWidth) {
                     var lines = [];
                     var currentLine = '';
@@ -137,7 +139,7 @@
                     return lines;
                 }
             }
-
+            /*入力ウィンドウの描画*/
             if (input_window_canvas) {
                 var input_window_ctx = input_window_canvas.getContext('2d');
 
@@ -149,6 +151,40 @@
                     document.querySelector('.message-box').innerText = this.value || 'メッセージウィンドウ';
                 });
             }
+            /*フォームの送信イベント*/
+            document.getElementById('InputForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                var userInput = document.getElementById('message-input').value;
+                var form = document.getElementById('InputForm');
+                
+                // 画像を変更する処理
+                if (game_background_canvas) {
+                    var game_background_ctx = game_background_canvas.getContext('2d');
+                    game_background_img.src = '<%= asset_path("/game_background_scene2.png") %>'; // 変更後の画像パス
+                    game_background_img.onload = function() {
+                        game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                        game_background_ctx.drawImage(game_background_img, 189, 36, 901, 507);
+                    }
+                }
+
+                if (character_canvas) {
+                    var character_ctx = character_canvas.getContext('2d');
+
+                    // Canvasのサイズを設定
+                    character_canvas.width = character_canvas.offsetWidth;
+                    character_canvas.height = character_canvas.offsetHeight;
+
+                    // 面接官画像を描画
+                    var character_img = new Image();
+                    character_img.src = '<%= asset_path("/girl_normal.png") %>';  // 面接官画像のパスを指定
+                    character_img.onload = function() {
+                        character_ctx.drawImage(character_img, 470, 60, 358, 358);
+                    }
+                }
+
+                form.reset();
+
+            });
 
         });
 
