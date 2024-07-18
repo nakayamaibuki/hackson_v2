@@ -29,23 +29,20 @@
 
         <div class="input_window_scene_1">
 
-                <form class="StartButton" id = "startbutton">
-                    <button class="start_button" id="start_Button">はじめから</button>
-                </form>
+            <form class="StartButton" id = "startbutton">
+                <button class="start_button" id="start_Button">はじめから</button>
+            </form>
 
-                <form class="input_form" id="InputForm">
-                    <input id="message_input" placeholder='返答を記入してください' required>
-                    <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
-                </form>
+            <form class="input_form" id="InputForm">
+                <input id="message_input" placeholder='返答を記入してください' required>
+                <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
+            </form>
 
-                <form class="clicbutom" id="clicButton">
-                    <button id="select_1">選択肢1</button>
-                    <button id="select_2">選択肢2</button> 
-                </form>
-
-
+            <form class="clicbutom" id="clicButton">
+                <button id="select_1">選択肢1</button>
+                <button id="select_2">選択肢2</button> 
+            </form>
         </div>
-
     </div>
 
     <script>
@@ -55,7 +52,6 @@
             var character_canvas = document.getElementById('CharacterCanvas_scene_1');
             var message_window_canvas = document.getElementById('MessageWindowCanvas');
             var input_window_canvas = document.getElementById('InputWindowCanvas_scene_1');
-            var input_condition = 0;
             var scene_count = 0;
 
             // 画面に下部の手動機構
@@ -95,6 +91,47 @@
                 }
             }
 
+            var Item = function (val) {
+                this._scene_count = val;
+            }
+            
+            Item.prototype.setValue = function (val) {
+                this._scene_count = val;
+            }
+
+            let itemInstance = new Item(scene_count);
+
+
+            document.getElementById('start_Button').addEventListener('click', function(event) {
+                event.preventDefault();
+                scene_count++;
+                itemInstance.setValue(scene_count);
+                itemInstance.change_game_background(scene_count);
+                itemInstance.change_input_window(scene_count);
+                itemInstance.change_message_window(scene_count);
+                itemInstance.change_charcter_window(scene_count);
+            });
+
+            document.getElementById('select_1').addEventListener('click', function(event) {
+                event.preventDefault();
+                scene_count++;
+                itemInstance.setValue(scene_count);
+                itemInstance.change_game_background(scene_count);
+                itemInstance.change_input_window(scene_count);
+                itemInstance.change_message_window(scene_count);
+                itemInstance.change_charcter_window(scene_count);
+            });
+
+            document.getElementById('InputForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                scene_count++;
+                itemInstance.setValue(scene_count);
+                itemInstance.change_game_background(scene_count);
+                itemInstance.change_input_window(scene_count);
+                itemInstance.change_message_window(scene_count);
+                itemInstance.change_charcter_window(scene_count);
+            });
+
             if (background_canvas) {
                 var background_ctx = background_canvas.getContext('2d');
             }
@@ -113,78 +150,41 @@
                     game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
                 }
 
-                document.getElementById('start_Button').addEventListener('click', function(event) {
+                Item.prototype.change_game_background = function (scene_count) {
                     event.preventDefault();
 
-                    // 背景のPathを1へ
-                    selectedBackgroundImagePath = background_images[1];
+                    if (scene_count === 1) {
+                        // 背景のPathを1へ
+                        selectedBackgroundImagePath = background_images[1];
 
-                    game_background_img.src = selectedBackgroundImagePath; 
-                    game_background_img.onload = function() {
-                        game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-                        game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        game_background_img.src = selectedBackgroundImagePath; 
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
                     }
-                });
+                    else if (scene_count === 2) {
+                        // 背景のPathを2へ
+                        selectedBackgroundImagePath = background_images[2];
 
-                document.getElementById('select_1').addEventListener('click', function(event) {
-                    event.preventDefault();
-                    // game_background_ctx.clearRect(0, 0, 921, 519);
-
-                    // 背景のPathを2へ
-                    selectedBackgroundImagePath = background_images[2];
-
-                    game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
-                    game_background_img.onload = function() {
-                        game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-                        game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
                     }
-                });
+                    // エンディングへ
+                    else if (scene_count === 3) {
+                        /// 背景のPathを3へ
+                        selectedBackgroundImagePath = background_images[3];
 
-                // document.getElementById('InputForm').addEventListener('submit', function(event) {
-                //     event.preventDefault();
-                //     var userInput = document.getElementById('message_input').value;
-                //     var form = document.getElementById('InputForm');
-
-                //     // 背景画像を描画
-                //     var input_window_img = new Image();
-                //     input_window_img.src = '<%= asset_path("/inputwindow.png") %>';  // 背景画像のパスを指定
-                //     input_window_img.onload = function() {
-                //         input_window_ctx.drawImage(input_window_img, 201, 412);
-                //     }
-
-                //     if (character_canvas) {
-                //         var character_ctx = character_canvas.getContext('2d');
-                //         // 配列からランダムに画像パスを取得
-                //         var randomIndex = Math.floor(Math.random() * girl_face.length);
-                //         var selectedImagePath = girl_face[randomIndex];
-
-                //         // Canvasのサイズを設定
-                //         character_canvas.width = character_canvas.offsetWidth;
-                //         character_canvas.height = character_canvas.offsetHeight;
-
-                //         // 背景画像を描画
-                //         var character_img = new Image();
-                //         character_img.src = selectedImagePath;  // 背景画像のパスを指定
-                //         character_img.onload = function() {
-                //             character_ctx.drawImage(character_img, 362, 70, 238, 228);
-                //         }
-                //     }
-
-                //     form.reset();
-
-                // });
-
-                document.getElementById('InputForm').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    // 配列からランダムに画像パスを取得
-                    selectedBackgroundImagePath = background_images[3];
-
-                    game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
-                    game_background_img.onload = function() {
-                        game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-                        game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
                     }
-                });
+                }
             }
 
             if (character_canvas) {
@@ -205,26 +205,18 @@
                     }
                 });
 
-                // document.getElementById('InputForm').addEventListener('submit', function(event) {
-                //     event.preventDefault();
-                    
-                //     var character_ctx = character_canvas.getContext('2d');
-                //     // 配列からランダムに画像パスを取得
-                //     selectedGirlFaceImagePath = girl_face[1];
-
-                //     // 背景画像を描画
-                //     var character_img = new Image();
-                //     character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
-                //     character_img.onload = function() {
-                //         character_ctx.drawImage(character_img, 362, 70, 238, 228);
-                //     }
-                // });
-
-                document.getElementById('InputForm').addEventListener('submit', function(event) {
+                Item.prototype.change_charcter_window = function (scene_count) {
                     event.preventDefault();
 
-                    character_ctx.clearRect(0, 0, 921, 519);
-                });
+                    if (scene_count === 1) {
+                    }
+                    else if (scene_count === 2) {
+                    }
+                    // エンディングへ
+                    else if (scene_count === 3) {
+                        character_ctx.clearRect(0, 0, 921, 519);
+                    }
+                }
             }
 
             // テキスト入力無し
@@ -265,27 +257,25 @@
                     
                 });
 
-                // if ( 0 < scene_count ) {
-                //     // 背景画像を描画
-                //     message_window_ctx.clearRect(0, 0, 921, 519);
-
-                //     var message_window_img = new Image();
-                //     message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';  // 背景画像のパスを指定
-                //     message_window_img.onload = function() {
-                //         message_window_ctx.drawImage(message_window_img, 201, 263);
-                //     }
-                // }
-
-                document.getElementById('start_Button').addEventListener('click', function(event) {
+                Item.prototype.change_message_window = function (scene_count) {
                     event.preventDefault();
-                    message_window_ctx.clearRect(0, 0, 921, 519);
+                    // this._scene_count = scene_count;
 
-                    var message_window_img = new Image();
-                    message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';  // 背景画像のパスを指定
-                    message_window_img.onload = function() {
-                        message_window_ctx.drawImage(message_window_img, 201, 263);
+                    if (scene_count === 1) {
+                        message_window_ctx.clearRect(0, 0, 921, 519);
+
+                        var message_window_img = new Image();
+                        message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';  // 背景画像のパスを指定
+                        message_window_img.onload = function() {
+                            message_window_ctx.drawImage(message_window_img, 201, 263);
+                        }
                     }
-                });
+                    else if (scene_count === 2) {
+                    }
+                    // エンディングへ
+                    else if (scene_count === 3) {
+                    }
+                }
             }
 
             // if (message_window_canvas) {
@@ -369,59 +359,24 @@
                 input_window_canvas.width = input_window_canvas.offsetWidth;
                 input_window_canvas.height = input_window_canvas.offsetHeight;
 
-                document.getElementById('start_Button').addEventListener('click', function(event) {
-                    start_button.style.visibility = 'hidden';
-                    input_button.style.visibility = 'visible';
-
-                    scene_count++;
-                });
-
-                document.getElementById('select_1').addEventListener('click', function(event) {
+                Item.prototype.change_input_window = function (scene_count) {
                     event.preventDefault();
+                    // this._scene_count = scene_count;
 
-                    input_button.style.visibility = 'hidden';
-                    input_txet.style.visibility = 'visible';
-                });
-
-                // document.getElementById('InputForm').addEventListener('submit', function(event) {
-                //     event.preventDefault();
-                //     var userInput = document.getElementById('message_input').value;
-                //     var form = document.getElementById('InputForm');
-
-                //     // 背景画像を描画
-                //     var input_window_img = new Image();
-                //     input_window_img.src = '<%= asset_path("/inputwindow.png") %>';  // 背景画像のパスを指定
-                //     input_window_img.onload = function() {
-                //         input_window_ctx.drawImage(input_window_img, 201, 412);
-                //     }
-
-                //     if (character_canvas) {
-                //         var character_ctx = character_canvas.getContext('2d');
-                //         // 配列からランダムに画像パスを取得
-                //         var randomIndex = Math.floor(Math.random() * girl_face.length);
-                //         var selectedImagePath = girl_face[randomIndex];
-
-                //         // Canvasのサイズを設定
-                //         character_canvas.width = character_canvas.offsetWidth;
-                //         character_canvas.height = character_canvas.offsetHeight;
-
-                //         // 背景画像を描画
-                //         var character_img = new Image();
-                //         character_img.src = selectedImagePath;  // 背景画像のパスを指定
-                //         character_img.onload = function() {
-                //             character_ctx.drawImage(character_img, 362, 70, 238, 228);
-                //         }
-                //     }
-                //     form.reset();
-                // });
-
-                document.getElementById('InputForm').addEventListener('submit', function(event) {
-                    event.preventDefault();
-
-                    input_txet.style.visibility = 'hidden';
-                });
+                    if (scene_count === 1) {
+                        start_button.style.visibility = 'hidden';
+                        input_button.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 2) {
+                        input_button.style.visibility = 'hidden';
+                        input_txet.style.visibility = 'visible';
+                    }
+                    // エンディングへ
+                    else if (scene_count === 3) {
+                        input_txet.style.visibility = 'hidden';
+                    }
+                }
             }
-
         });
     </script>
 </body>
