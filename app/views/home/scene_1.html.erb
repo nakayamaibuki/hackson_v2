@@ -29,19 +29,15 @@
 
         <div class="input_window_scene_1">
 
-                <%# <div class="hidden" id="InputForm_element"> %>
                 <form class="input_form" id="InputForm">
                     <input id="message_input" placeholder='返答を記入してください' required>
                     <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
                 </form>
-                <%# </div> %>
 
-                <%# <div lass="hidden" id="Inputbuttom_element"> %>
                 <form class="clicbutom" id="clicButton">
                     <button id="select_1">選択肢1</button>
                     <button id="select_2">選択肢2</button> 
                 </form>
-                <%# </div> %>
         </div>
 
     </div>
@@ -64,20 +60,6 @@
                                     '<%= asset_path("/girl_smile.png") %>',
                                     '<%= asset_path("/girl_angry.png") %>'
             ];
-
-            // if (input_condition == 0) {
-            //     const  input_txet = document.getElementById('InputForm') 
-            //     iinput_txet.style.visibility = 'hidden';
-            // }
-            // else if (input_condition == 1) {
-            //     const  input_button = document.getElementById('clicButton')
-            //     input_button.style.visibility = 'hidden';
-            // }
-
-            // if (input_condition == 1) {
-            //     const  input_button = document.getElementById('clicButton')
-            //     input_button.style.visibility = 'hidden';
-            // }
 
             function drawImageOnCanvas(canvas, imageSrc, x, y, width, height) {
                 var ctx = canvas.getContext('2d');
