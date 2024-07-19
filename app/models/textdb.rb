@@ -1,0 +1,2 @@
+class Textdb < ApplicationRecord
+end

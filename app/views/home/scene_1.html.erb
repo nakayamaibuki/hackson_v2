@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
-<%= stylesheet_link_tag 'scene_1', media: 'all', 'data-turbolinks-track': 'reload'%>
+
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= stylesheet_link_tag 'scene_1', media: 'all', 'data-turbolinks-track': 'reload'%>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
     <title>恋愛面接</title>
 </head>
 
@@ -127,6 +130,29 @@
                 event.preventDefault();
                 scene_count++;
                 change_image(scene_count);
+
+                var messageContent = document.getElementById('message_input').value;
+    
+                fetch('/save_message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ message: { content: messageContent } })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('メッセージが保存されました');
+                        // 必要に応じて他の処理を追加
+                    } else {
+                        alert('メッセージの保存に失敗しました');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
 
             document.addEventListener('keydown', function (event) {
