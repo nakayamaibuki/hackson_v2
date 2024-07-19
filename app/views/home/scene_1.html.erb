@@ -34,13 +34,13 @@
             </form>
 
             <form class="input_form" id="InputForm">
-                <input id="message_input" placeholder='返答を記入してください' required>
+                <input id="message_input" placeholder='返答を記入してください'>
                 <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
             </form>
 
             <form class="clicbutom" id="clicButton">
-                <button id="select_1">選択肢1</button>
-                <button id="select_2">選択肢2</button> 
+                <button id="select_1">3回ノックする</button>
+                <button id="select_2">2回ノックする</button> 
             </form>
         </div>
     </div>
@@ -95,7 +95,8 @@
                 itemInstance.setValue(val);
                 itemInstance.change_game_background(val);
                 itemInstance.change_charcter_window(val);
-                itemInstance.change_message_window(val);
+                itemInstance.change_message(val);
+                // itemInstance.change_message_window(val);
                 itemInstance.change_input_window(val);
             }
 
@@ -130,7 +131,8 @@
 
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Enter') {
-                    scene_count++;
+                    scene_count = scene_count + 0.5;
+                    change_image(scene_count);
                 }
             });
 
@@ -166,7 +168,7 @@
                             game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
                         }
                     }
-                    else if (scene_count === 2) {
+                    else if (scene_count === 10) {
                         // 背景のPathを2へ
                         selectedBackgroundImagePath = background_images[2];
 
@@ -176,8 +178,18 @@
                             game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
                         }
                     }
+                    if (scene_count === 32) {
+                        // 背景のPathを1へ
+                        selectedBackgroundImagePath = background_images[1];
+
+                        game_background_img.src = selectedBackgroundImagePath; 
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
+                    }
                     // エンディングへ
-                    else if (scene_count === 3) {
+                    else if (scene_count === 33) {
                         /// 背景のPathを3へ
                         selectedBackgroundImagePath = background_images[3];
 
@@ -196,127 +208,45 @@
                 // Canvasのサイズを設定
                 character_canvas.width = character_canvas.offsetWidth;
                 character_canvas.height = character_canvas.offsetHeight;
-
-                document.getElementById('select_1').addEventListener('click', function(event) {
-                    event.preventDefault();
-
-                    // 背景画像を描画
-                    var character_img = new Image();
-                    character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
-                    character_img.onload = function() {
-                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
-                    }
-                });
+                var character_img = new Image();
+                character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
 
                 Item.prototype.change_charcter_window = function (scene_count) {
                     event.preventDefault();
 
-                    if (scene_count === 1) {
+                    if (scene_count === 10) {
+                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
                     }
-                    else if (scene_count === 2) {
+                    else if (15 < scene_count && scene_count < 32) {
+                        character_ctx.clearRect(0, 0, 921, 519);
+                        // 一旦ランダム
+                        randomNumber = Math.floor(Math.random() * (3));
+
+                        selectedGirlFaceImagePath = girl_face[randomNumber];
+                        character_img.src = selectedGirlFaceImagePath; 
+                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
                     }
                     // エンディングへ
-                    else if (scene_count === 3) {
+                    else if (scene_count === 32) {
                         character_ctx.clearRect(0, 0, 921, 519);
                     }
                 }
             }
 
-            // テキスト入力無し
             if (message_window_canvas) {
-                function wrapText(context, text, maxWidth) {
-                    var lines = [];
-                    var currentLine = '';
-                    for (var i = 0; i < text.length; i++) {
-                        var char = text[i];
-                        var testLine = currentLine + char;
-                        var width = context.measureText(testLine).width;
-                        if (width > maxWidth && currentLine !== '') {
-                            lines.push(currentLine);
-                            currentLine = char;
-                        } else {
-                            currentLine = testLine;
-                        }
-                    }
-                    lines.push(currentLine);
-                    return lines;
-                }
-                
-                function displayMessage(name, message) {
-                    message_window_ctx.font = '20px sans-serif';
-                    message_window_ctx.fillStyle = 'black';
-                    var textHeight = 20;
-
-                    message_window_ctx.fillText(name, 200 + 20, 249 + 40);
-
-                    message_window_ctx.font = "16px SeoulNamsan";
-                    var maxWidth = 550 - 40;
-                    var wrappedText = wrapText(message_window_ctx, message, maxWidth);
-
-                    var charIndex = 0;
-                    var lineIndex = 0;
-
-                    var x = 200 + 15;
-                    var y = 249 + 69;
-
-                    function drawNextChar() {
-                        if (lineIndex < wrappedText.length) {
-                            if (charIndex < wrappedText[lineIndex].length) {
-                                message_window_ctx.fillText(wrappedText[lineIndex][charIndex], x, y);
-                                charIndex++;
-                                x += message_window_ctx.measureText(wrappedText[lineIndex][charIndex - 1]).width;
-                                setTimeout(drawNextChar, 30); // 30ミリ秒ごとに次の文字を描画
-                            } else {
-                                charIndex = 0;
-                                lineIndex++;
-                                x = 201 + 15;
-                                y += textHeight;
-                                setTimeout(drawNextChar, 30);
-                            }
-                        }
-                    }
-                    drawNextChar();
-                }
-
-                function fetchMessages() {
-                    fetch('/huckson_test_story.txt')
-                        .then(response => response.text())
-                        .then(data => {
-                            const lines = data.split('\n');
-                            lines.forEach(line => {
-                                const [name, message] = line.split('：');
-                                text_messages.push({ name, message });
-                            });
-                            displayMessage(text_messages[currentMessageIndex].name, text_messages[currentMessageIndex].message);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                }
-
-                function simulateEnterKey() {
-                    const event = new KeyboardEvent('keydown', {
-                        key: 'Enter',
-                        keyCode: 13,
-                        code: 'Enter',
-                        which: 13,
-                        shiftKey: false,
-                        ctrlKey: false,
-                        metaKey: false
-                    });
-                    document.dispatchEvent(event);
-                }
-
-                var message_window_ctx = message_window_canvas.getContext('2d');
-                // Canvasのサイズを設定
-                message_window_canvas.width = message_window_canvas.offsetWidth;
-                message_window_canvas.height = message_window_canvas.offsetHeight;
-
-                let text_messages = [];
-                let currentMessageIndex = 0;
+                let Current_MessageIndex = 0;
                 let enterFlag = false;
                 var title_messages = ["恋愛面接", "～恋と内定の行方～"];
+
+                var message_window_ctx = message_window_canvas.getContext('2d');
+
+                // Canvasの設定
+                message_window_canvas.width = message_window_canvas.offsetWidth;
+                message_window_canvas.height = message_window_canvas.offsetHeight;
                 message_window_ctx.fillStyle = "rgb(213, 67, 216)";
+                message_window_ctx.font = '20px sans-serif';
+                var message_window_img = new Image();
+                message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';
 
                 // 各行の位置を計算
                 var textHeight = 40; // フォントサイズに合わせて調整
@@ -345,43 +275,145 @@
                     
                 });
 
-                Item.prototype.change_message_window = function (scene_count) {
+                function fetchMessages() {
+                    let TextMessages = []
+                    fetch('/huckson_test_story.txt')
+                        .then(response => response.text())
+                        .then(data => {
+                            const lines = data.split('\n');
+                            lines.forEach(line => {
+                                const [name, message] = line.split('：');
+                                TextMessages.push({ name, message });
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    return TextMessages;
+                }
+
+                function wrapText(context, text, maxWidth) {
+                    var lines = [];
+                    var currentLine = '';
+                    for (var i = 0; i < text.length; i++) {
+                        var char = text[i];
+                        var testLine = currentLine + char;
+                        var width = context.measureText(testLine).width;
+                        if (width > maxWidth && currentLine !== '') {
+                            lines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    lines.push(currentLine);
+                    return lines;
+                }
+                
+                function displayMessage(name, message) {
+                    var TextHeight = 20;
+
+                    message_window_ctx.fillText(name, 200 + 20, 249 + 40);
+
+                    message_window_ctx.font = "16px SeoulNamsan";
+                    var maxWidth = 550 - 40;
+                    var wrappedText = wrapText(message_window_ctx, message, maxWidth);
+
+                    var charIndex = 0;
+                    var lineIndex = 0;
+
+                    var x = 200 + 15;
+                    var y = 249 + 69;
+
+                    function drawNextChar() {
+                        if (lineIndex < wrappedText.length) {
+                            if (charIndex < wrappedText[lineIndex].length) {
+                                message_window_ctx.fillText(wrappedText[lineIndex][charIndex], x, y);
+                                charIndex++;
+                                x += message_window_ctx.measureText(wrappedText[lineIndex][charIndex - 1]).width;
+                                setTimeout(drawNextChar, 30); // 30ミリ秒ごとに次の文字を描画
+                            } else {
+                                charIndex = 0;
+                                lineIndex++;
+                                x = 201 + 15;
+                                y += TextHeight;
+                                setTimeout(drawNextChar, 30);
+                            }
+                        }
+                    }
+                    drawNextChar();
+                }
+
+                function simulateEnterKey() {
+                    const event = new KeyboardEvent('keydown', {
+                        key: 'Enter',
+                        keyCode: 13,
+                        code: 'Enter',
+                        which: 13,
+                        shiftKey: false,
+                        ctrlKey: false,
+                        metaKey: false
+                    });
+                    document.dispatchEvent(event);
+                }
+
+                let text_messages = fetchMessages();
+
+                function drawMessage (currentMessageIndex, Name, Message) {
+                    enterFlag = !enterFlag;
+            
+                    if (currentMessageIndex < text_messages.length) {
+                        displayMessage(Name,Message);
+                    } else {
+                    console.log('No more messages.');
+                    }
+                    if (enterFlag) {
+                        simulateEnterKey();
+                    }
+                }  
+
+                // Item.prototype.change_message_window = function (scene_count) {
+                //     event.preventDefault();
+                //     // this._scene_count = scene_count;
+
+                //     if (scene_count === 1) {
+                //         // message_window_ctx.clearRect(0, 0, 921, 519);
+                //         message_window_ctx.fillStyle = 'black';
+
+                //         // message_window_ctx.drawImage(message_window_img, 201, 263);
+                //     }
+
+                //     // else if (scene_count === 5) {
+                //     // }
+                //     // // エンディングへ
+                //     // else if (scene_count === 8) {
+                //     // }
+                // }
+
+                Item.prototype.change_message = function (scene_count) {
                     event.preventDefault();
                     // this._scene_count = scene_count;
 
                     if (scene_count === 1) {
-                        message_window_ctx.clearRect(0, 0, 921, 519);
+                        message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
+                        message_window_ctx.drawImage(message_window_img, 201, 263);
+                        message_window_ctx.fillStyle = 'black';
 
-                        var message_window_img = new Image();
-                        message_window_img.src = '<%= asset_path("/messagewindow_v2.png") %>';  // 背景画像のパスを指定
-                        message_window_img.onload = function() {
-                            message_window_ctx.drawImage(message_window_img, 201, 263);
-                            fetchMessages()
-                        }
+                        drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
+                        Current_MessageIndex++;
+                    }
+                    else if (1 < scene_count) {
+                        // message_window_ctx.drawImage(message_window_img, 201, 263);
+                        message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
+                        message_window_ctx.drawImage(message_window_img, 201, 263);
+                        
+                        drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
 
-                        document.addEventListener('keydown', function (event) {
-                            if (event.key === 'Enter') {
-                                enterFlag = !enterFlag;
-                                currentMessageIndex++;
-                                message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
-                                message_window_ctx.drawImage(message_window_img, 201, 263);
-
-                                if (currentMessageIndex < text_messages.length) {
-                                    fetchMessages(text_messages[currentMessageIndex].name, text_messages[currentMessageIndex].message);
-                                } else {
-                                    console.log('No more messages.');
-                                }
-                                if (enterFlag) {
-                                    simulateEnterKey();
-                                }
-                            }
-                        });
+                        Current_MessageIndex++;
                     }
-                    else if (scene_count === 2) {
-                    }
-                    // エンディングへ
-                    else if (scene_count === 3) {
-                    }
+                    // // エンディングへ
+                    // else if (scene_count === 20) {
+                    // }
                 }
             }
 
@@ -398,16 +430,30 @@
 
                     if (scene_count === 1) {
                         start_button.style.visibility = 'hidden';
-                        input_button.style.visibility = 'visible';
+                        // input_button.style.visibility = 'visible';
                     }
-                    else if (scene_count === 2) {
+                    else if (scene_count === 6) {
+                        input_button.style.visibility = 'visible';
+                        // input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 8) {
                         input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 15 ) {
+                        // input_button.style.visibility = 'hidden';
                         input_txet.style.visibility = 'visible';
                     }
-                    // エンディングへ
-                    else if (scene_count === 3) {
+                    else if (scene_count === 16 ) {
+                        // input_button.style.visibility = 'hidden';
                         input_txet.style.visibility = 'hidden';
                     }
+                    // エンディングへ
+                    // else if (scene_count === 3) {
+                    //     input_button.style.visibility = 'hidden';
+                    //     input_txet.style.visibility = 'visible';
+                    // }
                 }
             }
         });
