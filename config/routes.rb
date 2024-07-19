@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'home/scene_1', to: 'home#create'
+  get 'home/scene_1'
   get 'home/title'
   get 'home/scene_2'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

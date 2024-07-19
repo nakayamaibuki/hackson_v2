@@ -1,2 +1,0 @@
-class Textdb < ApplicationRecord
-end
