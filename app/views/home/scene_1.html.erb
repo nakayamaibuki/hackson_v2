@@ -247,24 +247,37 @@
                 //     Current_MessageIndex =+ 2;
                 // }
                 // scene_count++;
-                scene_count +=  0.5;
+
+                if (scene_count === 13){
+                    scene_count += 2;
+                    Current_MessageIndex += 4;
+                    input_button.style.visibility = 'hidden';
+                }
+
+                scene_count +=  1;
+                start_Flag = false;
                 change_canvas(scene_count);
                 // start_Flag = false;
 
+                
             });
 
             document.getElementById('select_2').addEventListener('click', function(event) {
                 event.preventDefault();
                 // scene_count++;
-                scene_count +=  0.5;
+                scene_count +=  1;
+                start_Flag = false;
                 change_canvas(scene_count);
+                
                 // start_Flag = false;
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
                 // scene_count++;
-                scene_count +=  0.5;
+                scene_count +=  1;
+                start_Flag = false;
                 change_canvas(scene_count);
+                
             });
 
             document.addEventListener('keydown', function (event) {
@@ -297,7 +310,7 @@
                 document.getElementById('target_1').textContent = Sc
             }
 
-            Item.prototype.Messageindex = function (Current_MessageIndex) {
+            Item.prototype.Messageindex = function (scene_count) {
                 Mi = Current_MessageIndex.toString();
                 document.getElementById('target_2').textContent = Mi
             }
@@ -397,7 +410,7 @@
                         character_ctx.drawImage(character_img, 362, 70, 238, 228);
                     }
                     // エンディングへ
-                    else if (scene_count === 32) {
+                    else if (scene_count === 35) {
                         character_ctx.clearRect(0, 0, 921, 519);
                     }
                 }
