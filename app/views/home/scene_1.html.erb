@@ -55,6 +55,7 @@
 
         <p id = 'target_1'> ああ</p>
         <p id = 'target_2'> ああ</p>
+        <%# <p id = 'target_3'> ああ</p> %>
 
         <%# <div>
             <canvas id="CheckCanvas" width="921px" height="519px"></canvas>
@@ -71,13 +72,19 @@
             var input_window_canvas = document.getElementById('InputWindowCanvas_scene_1');
             var scene_count = 0;
             var Current_MessageIndex = 0;
+
+            // var space_count = 0;
+
             var start_Flag = false;
+            // var enterFlag = false;
 
             // 確認用
             var Sc = scene_count.toString();
             document.getElementById('target_1').textContent = Sc;
             var Mi = Current_MessageIndex.toString();
             document.getElementById('target_2').textContent = Mi;
+            // var Sp = space_count.toString();
+            // document.getElementById('target_3').textContent = Sp;
 
             // 画面に下部の手動機構
             const  start_button = document.getElementById('startbutton')
@@ -107,25 +114,114 @@
             var selectedGirlFaceImagePath = girl_face[0];
             var selectedBackgroundImagePath = background_images[0];
 
-            // image表示関数
-            function drawImageOnCanvas(canvas, imageSrc, x, y, width, height) {
-                var ctx = canvas.getContext('2d');
-                var img = new Image();
-                img.src = imageSrc;
-                img.onload = function() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, x, y, width, height);
-                }
-            }
+            // // message表示関数
+            // function fetchMessages() {
+            //     let TextMessages = []
+            //     fetch('/huckson_story.txt')
+            //         .then(response => response.text())
+            //         .then(data => {
+            //             const lines = data.split('\n');
+            //             lines.forEach(line => {
+            //                 const [name, message] = line.split('：');
+            //                 TextMessages.push({ name, message });
+            //             });
+            //         })
+            //         .catch(error => {
+            //             console.error('Error:', error);
+            //         });
+            //     return TextMessages;
+            // }
 
-            function change_image (val) {
-                itemInstance.SceneCount(val);
-                itemInstance.Messageindex(val);
+            // function wrapText(context, text, maxWidth) {
+            //     var lines = [];
+            //     var currentLine = '';
+            //     for (var i = 0; i < text.length; i++) {
+            //         var char = text[i];
+            //         var testLine = currentLine + char;
+            //         var width = context.measureText(testLine).width;
+            //         if (width > maxWidth && currentLine !== '') {
+            //             lines.push(currentLine);
+            //             currentLine = char;
+            //         } else {
+            //             currentLine = testLine;
+            //         }
+            //     }
+            //     lines.push(currentLine);
+            //     return lines;
+            // }
+                
+            // function displayMessage(name, message) {
+            //     var TextHeight = 20;
+            //     message_window_ctx.font = "16px SeoulNamsan";
+
+            //     message_window_ctx.fillText(name, 200 + 20, 249 + 40);
+
+            //     var maxWidth = 550 - 40;
+            //     var wrappedText = wrapText(message_window_ctx, message, maxWidth);
+
+            //     var charIndex = 0;
+            //     var lineIndex = 0;
+
+            //     var x = 200 + 15;
+            //     var y = 249 + 69;
+
+            //     function drawNextChar() {
+            //         if (lineIndex < wrappedText.length) {
+            //             if (charIndex < wrappedText[lineIndex].length) {
+            //                 message_window_ctx.fillText(wrappedText[lineIndex][charIndex], x, y);
+            //                 charIndex++;
+            //                 x += message_window_ctx.measureText(wrappedText[lineIndex][charIndex - 1]).width;
+            //                 setTimeout(drawNextChar, 30); // 30ミリ秒ごとに次の文字を描画
+            //             } else {
+            //                 charIndex = 0;
+            //                 lineIndex++;
+            //                 x = 201 + 15;
+            //                 y += TextHeight;
+            //                 setTimeout(drawNextChar, 30);
+            //             }
+            //         }
+            //     }
+            //     drawNextChar();
+            // }
+                
+            // function simulateSpaceKey() {
+            //     const event = new KeyboardEvent('keydown', {
+            //         key: ' ', // スペースキーのキー値
+            //         keyCode: 32, // スペースキーのキーコード
+            //         code: 'Space', // スペースキーのコード
+            //         which: 32, // スペースキーのwhich値
+            //         shiftKey: false,
+            //         ctrlKey: false,
+            //         metaKey: false
+            //     });
+            //     document.dispatchEvent(event);
+            // }
+
+            // function drawMessage (currentMessageIndex, Name, Message) {
+            //     enterFlag = !enterFlag;
+        
+            //     if (currentMessageIndex < text_messages.length) {
+            //         displayMessage(Name,Message);
+            //     } 
+            //     else {
+            //     console.log('No more messages.');
+            //     }
+
+            //     if (enterFlag) {
+            //         simulateSpaceKey();
+            //     }
+            // }  
+
+            // let text_messages = fetchMessages();
+
+            function change_canvas (val) {
+                // itemInstance.Messageindex(val);
                 itemInstance.setValue(val);
-                // itemInstance.change_game_background(val);
+                itemInstance.change_game_background(val);
                 itemInstance.change_input_window(val);
-                // itemInstance.change_charcter_window(val);
+                itemInstance.change_charcter_window(val);
                 itemInstance.change_message(val);
+                // itemInstance.SceneCount(val);
             }
 
             var Item = function (val) {
@@ -140,43 +236,59 @@
 
             document.getElementById('start_Button').addEventListener('click', function(event) {
                 event.preventDefault();
-                scene_count += 1;
+                scene_count ++;
+                change_canvas(scene_count);
                 // start_Flag = false;
-                change_image(scene_count);
-                // start_Flag = true;
             });
 
             document.getElementById('select_1').addEventListener('click', function(event) {
                 event.preventDefault();
-
                 // if(scene_count === 15) {
                 //     Current_MessageIndex =+ 2;
                 // }
-                scene_count++;
-                change_image(scene_count);
+                // scene_count++;
+                scene_count +=  0.5;
+                change_canvas(scene_count);
+                // start_Flag = false;
 
             });
 
             document.getElementById('select_2').addEventListener('click', function(event) {
                 event.preventDefault();
-                scene_count++;
-                change_image(scene_count);
+                // scene_count++;
+                scene_count +=  0.5;
+                change_canvas(scene_count);
+                // start_Flag = false;
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
-                scene_count++;
-                change_image(scene_count);
+                // scene_count++;
+                scene_count +=  0.5;
+                change_canvas(scene_count);
             });
 
             document.addEventListener('keydown', function (event) {
-                if (start_Flag) {
+                // vent.preventDefault();
+                if (start_Flag === true) {
                     if (event.key === ' ') {
-                        scene_count +=  1;
-                        change_image(scene_count);
+                        scene_count +=  0.5;
+                        change_canvas(scene_count);
+                        itemInstance.SceneCount(scene_count);
+                        itemInstance.Messageindex(scene_count);
+                        // start_Flag = false;
                     }
                 }
-                else {
-                    drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
+                else if (start_Flag === false) {
+                    // drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
+                    // scene_count +=  1;
+                    if (event.key === ' ') {
+                        change_canvas(scene_count);
+                        // drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
+                        itemInstance.SceneCount(scene_count);
+                        itemInstance.Messageindex(scene_count);
+                        start_Flag = true;
+                        // scene_count +=  0.5;
+                    }
                 }
             });
 
@@ -190,105 +302,110 @@
                 document.getElementById('target_2').textContent = Mi
             }
 
+            // Item.prototype.SpaceConunt = function (space_count) {
+            //     Sp = space_count.toString();
+            //     document.getElementById('target_3').textContent = Sp;
+            // }
+
             if (background_canvas) {
                 var background_ctx = background_canvas.getContext('2d');
             }
 
-            // if (game_background_canvas) {
-            //     var game_background_ctx = game_background_canvas.getContext('2d');
+            if (game_background_canvas) {
+                var game_background_ctx = game_background_canvas.getContext('2d');
 
-            //     // Canvasのサイズを設定
-            //     game_background_canvas.width = game_background_canvas.offsetWidth;
-            //     game_background_canvas.height = game_background_canvas.offsetHeight;
+                // Canvasのサイズを設定
+                game_background_canvas.width = game_background_canvas.offsetWidth;
+                game_background_canvas.height = game_background_canvas.offsetHeight;
 
-            //     // 背景画像を描画
-            //     var game_background_img = new Image();
-            //     game_background_img.src = selectedBackgroundImagePath;  // 背景画像のパスを指定
-            //     game_background_img.onload = function() {
-            //         game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
-            //     }
+                // 背景画像を描画
+                var game_background_img = new Image();
+                game_background_img.src = selectedBackgroundImagePath;  // 背景画像のパスを指定
+                game_background_img.onload = function() {
+                    game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                }
 
-            //     Item.prototype.change_game_background = function (scene_count) {
-            //         // event.preventDefault();
+                Item.prototype.change_game_background = function (scene_count) {
+                    // event.preventDefault();
 
-            //         if (scene_count === 1) {
-            //             // 背景のPathを1へ
-            //             selectedBackgroundImagePath = background_images[1];
+                    if (scene_count === 1) {
+                        // 背景のPathを1へ
+                        selectedBackgroundImagePath = background_images[1];
 
-            //             game_background_img.src = selectedBackgroundImagePath; 
-            //             game_background_img.onload = function() {
-            //                 game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-            //                 game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
-            //             }
-            //         }
-            //         else if (scene_count === 10) {
-            //             // 背景のPathを2へ
-            //             selectedBackgroundImagePath = background_images[2];
+                        game_background_img.src = selectedBackgroundImagePath; 
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
+                    }
+                    else if (scene_count === 9) {
+                        // 背景のPathを2へ
+                        selectedBackgroundImagePath = background_images[2];
 
-            //             game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
-            //             game_background_img.onload = function() {
-            //                 game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-            //                 game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
-            //             }
-            //         }
-            //         if (scene_count === 34) {
-            //             // 背景のPathを1へ
-            //             selectedBackgroundImagePath = background_images[1];
+                        game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
+                    }
+                    if (scene_count === 34) {
+                        // 背景のPathを1へ
+                        selectedBackgroundImagePath = background_images[1];
 
-            //             game_background_img.src = selectedBackgroundImagePath; 
-            //             game_background_img.onload = function() {
-            //                 game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-            //                 game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
-            //             }
-            //         }
-            //         // エンディングへ
-            //         else if (scene_count === 35) {
-            //             /// 背景のPathを3へ
-            //             selectedBackgroundImagePath = background_images[3];
+                        game_background_img.src = selectedBackgroundImagePath; 
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
+                    }
+                    // エンディングへ
+                    else if (scene_count === 35) {
+                        /// 背景のPathを3へ
+                        selectedBackgroundImagePath = background_images[3];
 
-            //             game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
-            //             game_background_img.onload = function() {
-            //                 game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
-            //                 game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
-            //             }
-            //         }
-            //     }
-            // }
+                        game_background_img.src = selectedBackgroundImagePath; // 変更後の画像パス
+                        game_background_img.onload = function() {
+                            game_background_ctx.clearRect(0, 0, game_background_canvas.width, game_background_canvas.height);
+                            game_background_ctx.drawImage(game_background_img, 136, 26, 648, 365);
+                        }
+                    }
+                }
+            }
 
-            // if (character_canvas) {
-            //     var character_ctx = character_canvas.getContext('2d');
+            if (character_canvas) {
+                var character_ctx = character_canvas.getContext('2d');
 
-            //     // Canvasのサイズを設定
-            //     character_canvas.width = character_canvas.offsetWidth;
-            //     character_canvas.height = character_canvas.offsetHeight;
-            //     var character_img = new Image();
-            //     character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
+                // Canvasのサイズを設定
+                character_canvas.width = character_canvas.offsetWidth;
+                character_canvas.height = character_canvas.offsetHeight;
+                var character_img = new Image();
+                character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
 
-            //     Item.prototype.change_charcter_window = function (scene_count) {
-            //         // event.preventDefault();
+                Item.prototype.change_charcter_window = function (scene_count) {
+                    // event.preventDefault();
 
-            //         if (scene_count === 10) {
-            //             character_ctx.drawImage(character_img, 362, 70, 238, 228);
-            //         }
-            //         else if (15 < scene_count && scene_count < 32) {
-            //             character_ctx.clearRect(0, 0, 921, 519);
-            //             // 一旦ランダム
-            //             randomNumber = Math.floor(Math.random() * (3));
+                    if (scene_count === 9) {
+                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    }
+                    else if (9 < scene_count && scene_count < 34) {
+                        character_ctx.clearRect(0, 0, 921, 519);
+                        // 一旦ランダム
+                        randomNumber = Math.floor(Math.random() * (3));
 
-            //             selectedGirlFaceImagePath = girl_face[randomNumber];
-            //             character_img.src = selectedGirlFaceImagePath; 
-            //             character_ctx.drawImage(character_img, 362, 70, 238, 228);
-            //         }
-            //         // エンディングへ
-            //         else if (scene_count === 32) {
-            //             character_ctx.clearRect(0, 0, 921, 519);
-            //         }
-            //     }
-            // }
+                        selectedGirlFaceImagePath = girl_face[randomNumber];
+                        character_img.src = selectedGirlFaceImagePath; 
+                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    }
+                    // エンディングへ
+                    else if (scene_count === 32) {
+                        character_ctx.clearRect(0, 0, 921, 519);
+                    }
+                }
+            }
 
             if (message_window_canvas) {
                 // let Current_MessageIndex = 0;
-                let enterFlag = true;
+                var enterFlag = false;
                 var title_messages = ["恋愛面接", "～恋と内定の行方～"];
 
                 var message_window_ctx = message_window_canvas.getContext('2d');
@@ -396,32 +513,6 @@
                     }
                     drawNextChar();
                 }
-
-                // function simulateEnterKey() {
-                //     const event = new KeyboardEvent('keydown', {
-                //         key: 'Enter',
-                //         keyCode: 13,
-                //         code: 'Enter',
-                //         which: 13,
-                //         shiftKey: false,
-                //         ctrlKey: false,
-                //         metaKey: false
-                //     });
-                //     document.dispatchEvent(event);
-                // }
-
-                // function simulateArrowRightKey() {
-                //     const event = new KeyboardEvent('keydown', {
-                //         key: 'ArrowRight',
-                //         keyCode: 39, // ArrowRight の keyCode
-                //         code: 'ArrowRight',
-                //         which: 39, // ArrowRight の which
-                //         shiftKey: false,
-                //         ctrlKey: false,
-                //         metaKey: false
-                //     });
-                //     document.dispatchEvent(event);
-                // }
                 
                 function simulateSpaceKey() {
                     const event = new KeyboardEvent('keydown', {
@@ -453,24 +544,6 @@
                     }
                 }  
 
-                // Item.prototype.change_message_window = function (scene_count) {
-                //     event.preventDefault();
-                //     // this._scene_count = scene_count;
-
-                //     if (scene_count === 1) {
-                //         // message_window_ctx.clearRect(0, 0, 921, 519);
-                //         message_window_ctx.fillStyle = 'black';
-
-                //         // message_window_ctx.drawImage(message_window_img, 201, 263);
-                //     }
-
-                //     // else if (scene_count === 5) {
-                //     // }
-                //     // // エンディングへ
-                //     // else if (scene_count === 8) {
-                //     // }
-                // }
-
                 Item.prototype.change_message = function (scene_count) {
                     // event.preventDefault();
                     // this._scene_count = scene_count;
@@ -481,32 +554,16 @@
                         message_window_ctx.fillStyle = 'black';
                     
                         drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
-                        Current_MessageIndex++;
+                        Current_MessageIndex += 1;
                         
-                        start_Flag = true;
                         // simulateSpaceKey();
                     }
-
                     else if (1 < scene_count) {
-                        // message_window_ctx.drawImage(message_window_img, 201, 263);
-                        // if (scene_count === 14) {
-                        //     document.getElementById('select_1').addEventListener('click', function(event) {
-                        //         event.preventDefault();
-                        //         // scene_count = scene_count + 2;
-                        //         Current_MessageIndex = Current_MessageIndex + 2;
-                        //     });
-                        // }
-
                         message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
                         message_window_ctx.drawImage(message_window_img, 201, 263);
                         
                         drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
-
-                        // if(scene_count === 14) {
-                        //     Current_MessageIndex = Current_MessageIndex + 3;
-                        // }
-
-                        Current_MessageIndex++;
+                        Current_MessageIndex += 1;
                     }
                     // // エンディングへ
                     // else if (scene_count === 20) {
@@ -528,107 +585,98 @@
                     if (scene_count === 1) {
                         start_button.style.visibility = 'hidden';
                     }
-                    // else if (scene_count === 5) {
-                    //     document.getElementById('select_1').value = "3回ノックする"
-                    //     document.getElementById('select_2').value = "2回ノックする"
-                    //     input_button.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 7) {
-                    //     input_button.style.visibility = 'hidden';
-                    //     // input_txet.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 10) {
-                    //     document.getElementById('select_1').value = "ドアを後ろ手で閉める"
-                    //     document.getElementById('select_2').value = "ドアに向き直して閉める"
-                    //     input_button.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 11) {
-                    //     input_button.style.visibility = 'hidden';
-                    //     // input_txet.style.visibility = 'visible';
-                    // }
+                    else if (scene_count === 5) {
+                        document.getElementById('select_1').value = "3回ノックする"
+                        document.getElementById('select_2').value = "2回ノックする"
+                        input_button.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 6) {
+                        input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 9) {
+                        document.getElementById('select_1').value = "ドアを後ろ手で閉める"
+                        document.getElementById('select_2').value = "ドアに向き直して閉める"
+                        input_button.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 10) {
+                        input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
 
-                    // else if (scene_count === 14) {
-                    //     document.getElementById('select_1').value = "椅子に座る"
-                    //     document.getElementById('select_2').value = "椅子の横に立ったまま"
-                    //     input_button.style.visibility = 'visible';
+                    else if (scene_count === 13) {
+                        document.getElementById('select_1').value = "椅子に座る"
+                        document.getElementById('select_2').value = "椅子の横に立ったまま"
+                        input_button.style.visibility = 'visible';
 
-                    //     // document.getElementById('select_1').addEventListener('click', function(event) {
-                    //     //     event.preventDefault();
-                    //     //     // scene_count = scene_count + 2;
-                    //     //     Current_MessageIndex = Current_MessageIndex + 2;
-                    //     // });
-                    // }
+                        // document.getElementById('select_1').addEventListener('click', function(event) {
+                        //     event.preventDefault();
+                        //     // scene_count = scene_count + 2;
+                        //     Current_MessageIndex = Current_MessageIndex + 2;
+                        // });
+                    }
+                    else if (scene_count === 14) {
+                        input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
+                    // 自己紹介
+                    else if (scene_count === 16 ) {
+                        // input_button.style.visibility = 'hidden';
+                        // 15
+                        document.getElementById('message_input').value = "";
+                        input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 17 ) {
+                        // input_button.style.visibility = 'hidden';
+                        input_txet.style.visibility = 'hidden';
+                        // document.getElementById('message_input').value = "";
+                    }
+                    // 志望動機
+                    else if (scene_count === 19 ) {
+                        // input_button.style.visibility = 'hidden';
+                        // 15
+                        document.getElementById('message_input').value = "";
+                        input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 20 ) {
+                        // input_button.style.visibility = 'hidden';
+                        input_txet.style.visibility = 'hidden';
+                        // document.getElementById('message_input').value = "";
+                    }
+                    // ガクチカ
+                    else if (scene_count === 22 ) {
+                        // input_button.style.visibility = 'hidden';
+                        // 15
+                        document.getElementById('message_input').value = "";
+                        input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 23 ) {
+                        // input_button.style.visibility = 'hidden';
+                        input_txet.style.visibility = 'hidden';
+                        // document.getElementById('message_input').value = "";
+                    }
+                    // あなたの強み
+                    else if (scene_count === 26 ) {
+                        // input_button.style.visibility = 'hidden';
+                        // 15
+                        document.getElementById('message_input').value = "";
+                        input_txet.style.visibility = 'visible';
+                    }
+                    else if (scene_count === 27 ) {
+                        // input_button.style.visibility = 'hidden';
+                        input_txet.style.visibility = 'hidden';
+                        // document.getElementById('message_input').value = "";
+                    }
+                    else if (scene_count === 30) {
+                        document.getElementById('select_1').value = "椅子から立ってお礼を言う"
+                        document.getElementById('select_2').value = "椅子に座ったままお礼を言う"
+                        input_button.style.visibility = 'visible';
+                    }
 
-                    // else if (scene_count === 16) {
-                    //     input_button.style.visibility = 'hidden';
-                    //     // input_txet.style.visibility = 'visible';
-                    // }
-                    // // 自己紹介
-                    // else if (scene_count === 18 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     // 15
-                    //     document.getElementById('message_input').value = "";
-                    //     input_txet.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 19 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     input_txet.style.visibility = 'hidden';
-                    //     // document.getElementById('message_input').value = "";
-                    // }
-                    // // 志望動機
-                    // else if (scene_count === 21 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     // 15
-                    //     document.getElementById('message_input').value = "";
-                    //     input_txet.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 23 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     input_txet.style.visibility = 'hidden';
-                    //     // document.getElementById('message_input').value = "";
-                    // }
-                    // // ガクチカ
-                    // else if (scene_count === 25 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     // 15
-                    //     document.getElementById('message_input').value = "";
-                    //     input_txet.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 26 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     input_txet.style.visibility = 'hidden';
-                    //     // document.getElementById('message_input').value = "";
-                    // }
-
-
-                    // // あなたの強み
-                    // else if (scene_count === 25 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     // 15
-                    //     document.getElementById('message_input').value = "";
-                    //     input_txet.style.visibility = 'visible';
-                    // }
-                    // else if (scene_count === 26 ) {
-                    //     // input_button.style.visibility = 'hidden';
-                    //     input_txet.style.visibility = 'hidden';
-                    //     // document.getElementById('message_input').value = "";
-                    // }
-                    // else if (scene_count === 30) {
-                    //     document.getElementById('select_1').value = "椅子から立ってお礼を言う"
-                    //     document.getElementById('select_2').value = "椅子に座ったままお礼を言う"
-                    //     input_button.style.visibility = 'visible';
-
-                    //     // document.getElementById('select_1').addEventListener('click', function(event) {
-                    //     //     event.preventDefault();
-                    //     //     // scene_count = scene_count + 2;
-                    //     //     Current_MessageIndex = Current_MessageIndex + 2;
-                    //     // });
-                    // }
-
-                    // else if (scene_count === 31) {
-                    //     input_button.style.visibility = 'hidden';
-                    //     // input_txet.style.visibility = 'visible';
-                    // }
+                    else if (scene_count === 31) {
+                        input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
                     // else if (scene_count === 16 ) {
                     //     // input_button.style.visibility = 'hidden';
                     //     input_txet.style.visibility = 'hidden';
