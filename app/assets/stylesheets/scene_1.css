@@ -83,15 +83,27 @@ body, html {
     text-indent: 0px; 
 }
 
-#message_input_button {
+#target_1 {
     position: absolute;
-    top: 435px;
+    top: 600px;
     left: 831px;
     width: 62px;
     height: 38px;
     font-size: 16px;
     z-index: 20; 
-    background: rgb(197, 23, 23); 
+    border: none;
+    padding: 10px; 
+    box-sizing: border-box;
+}
+
+#target_2 {
+    position: absolute;
+    top: 630px;
+    left: 831px;
+    width: 62px;
+    height: 38px;
+    font-size: 16px;
+    z-index: 20; 
     border: none;
     padding: 10px; 
     box-sizing: border-box;
