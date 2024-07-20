@@ -4,7 +4,10 @@ Rails.application.routes.draw do
   get 'home/title'
   get 'home/scene_2'
   
-  post 'home/scene_1', to: 'home#create'
+  post 'home/scene_1', to: 'home#AddInput'
+  post 'home/index', to: 'home#clear_datebase'
+  # post 'home/scene_1', to: 'home#SaveName'
+  # post 'home/scene_1', to: 'home#clear_datebase'
 
   # resources :post
   # get 'home/scene_1'

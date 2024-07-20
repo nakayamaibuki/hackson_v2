@@ -15,7 +15,7 @@
             <canvas id="BackgroundCanvas" width="921px" height="519px" style="background-color: #D9D9D9;"></canvas>
         </div>
 
-        <div class = "gameBackground">
+        <div class = "game_background">
             <canvas id="GameBackgroundCanvas" width="921px" height="519px"></canvas>
         </div>
 
@@ -23,57 +23,53 @@
             <canvas id="CharacterCanvas_scene_1" width="921px" height="519px"></canvas>
         </div>
 
-        <div class="message-window">
+        <div class="message_window">
             <canvas id="MessageWindowCanvas" width="921px" height="519px"></canvas>
             <div class="message-box">メッセージウィンドウ</div>
         </div>
 
         <div class="input_window_scene_1">
 
-            <form class="StartButton" id = "startbutton">
-                <button class="start_button" id="start_Button">はじめから</button>
+            <form action="/home/index" method="post"  id="NameInputForm", class="name_input_form" accept-charset="UTF-8" >
+                <input name="input_token" type="hidden" value="..." />
+                <input name="user_input_name[name]" id="NameInput" placeholder='名前を入力してください' type="text" />
+                <canvas id="InputNameCanvas" width="921px" height="519px"></canvas>
             </form>
+            <%# <input id="NameInput" placeholder='名前を入力してください' type="text" />
+            <canvas id="InputNameCanvas" width="921px" height="519px"></canvas> %>
 
-            <%# <form class="input_form" id="InputForm">
-                <input id="message_input" placeholder='返答を記入してください'>
-                <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
-            </form> %>
+            <form id = "StartButtonForm" class="start_button_form">
+                <input type="button" id="StartButton" value="はじめから"></button>
+            </form>
 
             <form action="/home/scene_1" method="post" id="InputForm", class="input_form" accept-charset="UTF-8" >
                 <input name="input_token" type="hidden" value="..." />
-                <input name="user_input_message[input]" id="message_input" placeholder='返答を記入してください' type="text" />
+                <input name="user_input_message[input]" id="MessageInput" placeholder='返答を記入してください' type="text" />
                 <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
-                
             </form>
-            <%# <input type="submit" name="commit" data-disable-with="Update Article"> %>
+            <%# <input id="MessageInput" placeholder='返答を記入してください' type="text" />
+            <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas> %>
 
-            <form class="clicbutom" id="clicButton">
-                <input type="button" id="select_1" value=""></button>
-                <input type="button" id="select_2" value=""></button>
+            <form id="ClicButton" class="clic_butom">
+                <input type="button" id="Select1" value=""></button>
+                <input type="button" id="Select2" value=""></button>
             </form>        
         </div>
 
         <p id = 'target_1'> ああ</p>
         <p id = 'target_2'> ああ</p>
-        <%# <p id = 'target_3'> ああ</p> %>
-
-        <%# <div>
-            <canvas id="CheckCanvas" width="921px" height="519px"></canvas>
-    
-        </div> %>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            var input_name_canvas = document.getElementById('InputNameCanvas');
             var background_canvas = document.getElementById('BackgroundCanvas');
             var game_background_canvas = document.getElementById('GameBackgroundCanvas');
             var character_canvas = document.getElementById('CharacterCanvas_scene_1');
             var message_window_canvas = document.getElementById('MessageWindowCanvas');
             var input_window_canvas = document.getElementById('InputWindowCanvas_scene_1');
-            var scene_count = 0;
+            var scene_count = -1;
             var Current_MessageIndex = 0;
-
-            // var space_count = 0;
 
             var start_Flag = false;
             // var enterFlag = false;
@@ -83,24 +79,25 @@
             document.getElementById('target_1').textContent = Sc;
             var Mi = Current_MessageIndex.toString();
             document.getElementById('target_2').textContent = Mi;
-            // var Sp = space_count.toString();
-            // document.getElementById('target_3').textContent = Sp;
 
             // 画面に下部の手動機構
-            const  start_button = document.getElementById('startbutton')
+            const  name_input = document.getElementById('NameInputForm')
+            const  start_button = document.getElementById('StartButtonForm')
             const  input_txet = document.getElementById('InputForm') 
-            const  input_button = document.getElementById('clicButton')
-            // start_button.style.visibility = 'hidden';
-            start_button.style.visibility = 'visible';
+            const  input_button = document.getElementById('ClicButton')
+            name_input.style.visibility = 'visible';
+            // name_input.style.visibility = 'hideen';
+            start_button.style.visibility = 'hidden';
+            // start_button.style.visibility = 'visible';
             input_txet.style.visibility = 'hidden'; 
             // input_txet.style.visibility = 'visible'; 
             input_button.style.visibility = 'hidden';
 
             // image配列
             var girl_face = [
-                                    '<%= asset_path("/girl_normal.png") %>',
-                                    '<%= asset_path("/girl_smile.png") %>',
-                                    '<%= asset_path("/girl_angry.png") %>'
+                            '<%= asset_path("/girl_normal.png") %>',
+                            '<%= asset_path("/girl_smile.png") %>',
+                            '<%= asset_path("/girl_angry.png") %>'
             ];
 
             var background_images = [
@@ -114,114 +111,12 @@
             var selectedGirlFaceImagePath = girl_face[0];
             var selectedBackgroundImagePath = background_images[0];
 
-            // // message表示関数
-            // function fetchMessages() {
-            //     let TextMessages = []
-            //     fetch('/huckson_story.txt')
-            //         .then(response => response.text())
-            //         .then(data => {
-            //             const lines = data.split('\n');
-            //             lines.forEach(line => {
-            //                 const [name, message] = line.split('：');
-            //                 TextMessages.push({ name, message });
-            //             });
-            //         })
-            //         .catch(error => {
-            //             console.error('Error:', error);
-            //         });
-            //     return TextMessages;
-            // }
-
-            // function wrapText(context, text, maxWidth) {
-            //     var lines = [];
-            //     var currentLine = '';
-            //     for (var i = 0; i < text.length; i++) {
-            //         var char = text[i];
-            //         var testLine = currentLine + char;
-            //         var width = context.measureText(testLine).width;
-            //         if (width > maxWidth && currentLine !== '') {
-            //             lines.push(currentLine);
-            //             currentLine = char;
-            //         } else {
-            //             currentLine = testLine;
-            //         }
-            //     }
-            //     lines.push(currentLine);
-            //     return lines;
-            // }
-                
-            // function displayMessage(name, message) {
-            //     var TextHeight = 20;
-            //     message_window_ctx.font = "16px SeoulNamsan";
-
-            //     message_window_ctx.fillText(name, 200 + 20, 249 + 40);
-
-            //     var maxWidth = 550 - 40;
-            //     var wrappedText = wrapText(message_window_ctx, message, maxWidth);
-
-            //     var charIndex = 0;
-            //     var lineIndex = 0;
-
-            //     var x = 200 + 15;
-            //     var y = 249 + 69;
-
-            //     function drawNextChar() {
-            //         if (lineIndex < wrappedText.length) {
-            //             if (charIndex < wrappedText[lineIndex].length) {
-            //                 message_window_ctx.fillText(wrappedText[lineIndex][charIndex], x, y);
-            //                 charIndex++;
-            //                 x += message_window_ctx.measureText(wrappedText[lineIndex][charIndex - 1]).width;
-            //                 setTimeout(drawNextChar, 30); // 30ミリ秒ごとに次の文字を描画
-            //             } else {
-            //                 charIndex = 0;
-            //                 lineIndex++;
-            //                 x = 201 + 15;
-            //                 y += TextHeight;
-            //                 setTimeout(drawNextChar, 30);
-            //             }
-            //         }
-            //     }
-            //     drawNextChar();
-            // }
-                
-            // function simulateSpaceKey() {
-            //     const event = new KeyboardEvent('keydown', {
-            //         key: ' ', // スペースキーのキー値
-            //         keyCode: 32, // スペースキーのキーコード
-            //         code: 'Space', // スペースキーのコード
-            //         which: 32, // スペースキーのwhich値
-            //         shiftKey: false,
-            //         ctrlKey: false,
-            //         metaKey: false
-            //     });
-            //     document.dispatchEvent(event);
-            // }
-
-            // function drawMessage (currentMessageIndex, Name, Message) {
-            //     enterFlag = !enterFlag;
-        
-            //     if (currentMessageIndex < text_messages.length) {
-            //         displayMessage(Name,Message);
-            //     } 
-            //     else {
-            //     console.log('No more messages.');
-            //     }
-
-            //     if (enterFlag) {
-            //         simulateSpaceKey();
-            //     }
-            // }  
-
-            // let text_messages = fetchMessages();
-
             function change_canvas (val) {
-                // itemInstance.Messageindex(val);
                 itemInstance.setValue(val);
                 itemInstance.change_game_background(val);
                 itemInstance.change_input_window(val);
                 itemInstance.change_charcter_window(val);
                 itemInstance.change_message(val);
-                // itemInstance.SceneCount(val);
             }
 
             var Item = function (val) {
@@ -234,20 +129,26 @@
 
             let itemInstance = new Item(scene_count);
 
-            document.getElementById('start_Button').addEventListener('click', function(event) {
-                event.preventDefault();
-                scene_count ++;
+            document.getElementById('NameInputForm').addEventListener('submit', function(event) {
+                // event.preventDefault();
+
+                scene_count =  0;
+                itemInstance.SceneCount(scene_count);
+                itemInstance.Messageindex(scene_count);
                 change_canvas(scene_count);
-                // start_Flag = false;
             });
 
-            document.getElementById('select_1').addEventListener('click', function(event) {
+            document.getElementById('StartButton').addEventListener('click', function(event) {
                 event.preventDefault();
-                // if(scene_count === 15) {
-                //     Current_MessageIndex =+ 2;
-                // }
-                // scene_count++;
 
+                scene_count ++;
+                change_canvas(scene_count);
+            });
+
+            document.getElementById('Select1').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // 選択肢のbadチョイス
                 if (scene_count === 13){
                     scene_count += 2;
                     Current_MessageIndex += 4;
@@ -262,22 +163,36 @@
                 
             });
 
-            document.getElementById('select_2').addEventListener('click', function(event) {
+            document.getElementById('Select2').addEventListener('click', function(event) {
                 event.preventDefault();
-                // scene_count++;
+
                 scene_count +=  1;
                 start_Flag = false;
                 change_canvas(scene_count);
-                
-                // start_Flag = false;
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
-                // scene_count++;
+                // データベースに保存
+                // const formData = new FormData();
+                // formData.append()
+                // // AJAXリクエストの送信
+                // fetch('/home/scene_1', {
+                //     method: 'POST',
+                //     body: formData
+                // })
+                // .then(response => response.text())
+                // .then(result => {
+                //     console.log('成功:', result);
+                //     // 必要に応じて、ページの遷移やUIの更新を行う
+                // })
+                // .catch(error => {
+                //     console.error('エラー:', error);
+                // });
+
                 scene_count +=  1;
                 start_Flag = false;
+                // document.getElementById('message_input').value;
                 change_canvas(scene_count);
-                
             });
 
             document.addEventListener('keydown', function (event) {
@@ -292,15 +207,11 @@
                     }
                 }
                 else if (start_Flag === false) {
-                    // drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
-                    // scene_count +=  1;
                     if (event.key === ' ') {
                         change_canvas(scene_count);
-                        // drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
                         itemInstance.SceneCount(scene_count);
                         itemInstance.Messageindex(scene_count);
                         start_Flag = true;
-                        // scene_count +=  0.5;
                     }
                 }
             });
@@ -315,13 +226,8 @@
                 document.getElementById('target_2').textContent = Mi
             }
 
-            // Item.prototype.SpaceConunt = function (space_count) {
-            //     Sp = space_count.toString();
-            //     document.getElementById('target_3').textContent = Sp;
-            // }
-
             if (background_canvas) {
-                var background_ctx = background_canvas.getContext('2d');
+                // var background_ctx = background_canvas.getContext('2d');
             }
 
             if (game_background_canvas) {
@@ -409,10 +315,10 @@
                         character_img.src = selectedGirlFaceImagePath; 
                         character_ctx.drawImage(character_img, 362, 70, 238, 228);
                     }
-                    // エンディングへ
-                    else if (scene_count === 35) {
-                        character_ctx.clearRect(0, 0, 921, 519);
-                    }
+                    // // エンディングへ
+                    // else if (scene_count === 35) {
+                    //     character_ctx.clearRect(0, 0, 921, 519);
+                    // }
                 }
             }
 
@@ -592,15 +498,17 @@
                 input_window_canvas.height = input_window_canvas.offsetHeight;
 
                 Item.prototype.change_input_window = function (scene_count) {
-                    // event.preventDefault();
-                    // this._scene_count = scene_count;
+                    if (scene_count === 0) {
+                        start_button.style.visibility = 'visible';
+                        name_input.style.visibility = 'hidden';
+                    }
 
                     if (scene_count === 1) {
                         start_button.style.visibility = 'hidden';
                     }
                     else if (scene_count === 5) {
-                        document.getElementById('select_1').value = "3回ノックする"
-                        document.getElementById('select_2').value = "2回ノックする"
+                        document.getElementById('Select1').value = "3回ノックする"
+                        document.getElementById('Select2').value = "2回ノックする"
                         input_button.style.visibility = 'visible';
                     }
                     else if (scene_count === 6) {
@@ -608,8 +516,8 @@
                         // input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 9) {
-                        document.getElementById('select_1').value = "ドアを後ろ手で閉める"
-                        document.getElementById('select_2').value = "ドアに向き直して閉める"
+                        document.getElementById('Select1').value = "ドアを後ろ手で閉める"
+                        document.getElementById('Select2').value = "ドアに向き直して閉める"
                         input_button.style.visibility = 'visible';
                     }
                     else if (scene_count === 10) {
@@ -618,15 +526,9 @@
                     }
 
                     else if (scene_count === 13) {
-                        document.getElementById('select_1').value = "椅子に座る"
-                        document.getElementById('select_2').value = "椅子の横に立ったまま"
+                        document.getElementById('Select1').value = "椅子に座る"
+                        document.getElementById('Select2').value = "椅子の横に立ったまま"
                         input_button.style.visibility = 'visible';
-
-                        // document.getElementById('select_1').addEventListener('click', function(event) {
-                        //     event.preventDefault();
-                        //     // scene_count = scene_count + 2;
-                        //     Current_MessageIndex = Current_MessageIndex + 2;
-                        // });
                     }
                     else if (scene_count === 14) {
                         input_button.style.visibility = 'hidden';
@@ -635,8 +537,7 @@
                     // 自己紹介
                     else if (scene_count === 16 ) {
                         // input_button.style.visibility = 'hidden';
-                        // 15
-                        document.getElementById('message_input').value = "";
+                        document.getElementById('MessageInput').value = "";
                         input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 17 ) {
@@ -648,7 +549,7 @@
                     else if (scene_count === 19 ) {
                         // input_button.style.visibility = 'hidden';
                         // 15
-                        document.getElementById('message_input').value = "";
+                        document.getElementById('MessageInput').value = "";
                         input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 20 ) {
@@ -660,7 +561,7 @@
                     else if (scene_count === 22 ) {
                         // input_button.style.visibility = 'hidden';
                         // 15
-                        document.getElementById('message_input').value = "";
+                        document.getElementById('MessageInput').value = "";
                         input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 23 ) {
@@ -672,7 +573,7 @@
                     else if (scene_count === 26 ) {
                         // input_button.style.visibility = 'hidden';
                         // 15
-                        document.getElementById('message_input').value = "";
+                        document.getElementById('MessageInput').value = "";
                         input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 27 ) {
@@ -681,8 +582,8 @@
                         // document.getElementById('message_input').value = "";
                     }
                     else if (scene_count === 30) {
-                        document.getElementById('select_1').value = "椅子から立ってお礼を言う"
-                        document.getElementById('select_2').value = "椅子に座ったままお礼を言う"
+                        document.getElementById('Select1').value = "椅子から立ってお礼を言う"
+                        document.getElementById('Select2').value = "椅子に座ったままお礼を言う"
                         input_button.style.visibility = 'visible';
                     }
 

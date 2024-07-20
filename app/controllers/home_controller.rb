@@ -9,8 +9,10 @@ class HomeController < ApplicationController
   def scene_2
   end
 
-  def create
+  def AddInput
+    # @user_input_message = Userinput.new(message_params)
     @user_input_message = Userinput.new(message_params)
+    @user_input_message.update(name: @user_input_name)
     if @user_input_message.save
       flash[:success] = "ユーザを登録しました"
       # redirect_to @user_input_message
@@ -22,12 +24,30 @@ class HomeController < ApplicationController
   end
 
   def index
-    @user_input_message = Userinput.all
+    Userinput.all
+  end
+
+  def clear_datebase
+    Userinput.destroy_all
+    @user_input_name = Userinput.new(name_params)
+    if @user_input_name.save
+      flash[:success] = "ユーザを登録しました"
+      # redirect_to @user_input_message
+      render :scene_1
+    else
+      flash[:danger] = "ユーザの登録に失敗しました"
+      render :scene_1
+    end
   end
 
   private
 
-  def message_params
-    params.require(:user_input_message).permit(:input)
+  def name_params
+    params.require(:user_input_name).permit(:input, :name)
   end
+
+  def message_params
+    params.require(:user_input_message).permit(:input, :name)
+  end
+
 end

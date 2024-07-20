@@ -11,7 +11,22 @@ body, html {
 }
 
 /* タイトルcss */
-.start_button {
+.input_window_scene_1 #NameInput {
+    position: absolute;
+    top: 421px;
+    left: 393px;
+    width: 500px;
+    height: 67px;
+    font-size: 16px;
+    z-index: 10; 
+    background: rgba(238, 238, 238, 1); 
+    border: none;
+    padding: 10px; 
+    box-sizing: border-box;
+    text-indent: 0px; 
+}
+
+#StartButton {
     position: absolute;
     top: 415px;
     left: 515px;
@@ -28,15 +43,6 @@ body, html {
     cursor: pointer;
 }
 
-/* .canvas_wrapper_scene_1 {
-    position: relative;
-    width: 80vw;
-    height: 45vw;
-
-    max-width: 1280px;
-    max-height: 720px;
-} */
-
 .canvas_wrapper_scene_1 canvas {
     position: absolute;
     top: 0px;
@@ -45,12 +51,7 @@ body, html {
     left: 50%; */
     /* width: 100%;
     height: 100%; */
-}
-
-/* .canvas_wrapper_scene_1 #GameBackgroundCanvas {
-
-} */
-    
+}   
 
 .input_window_scene_1 #InputWindowCanvas_scene_1 {
     position: absolute;
@@ -68,7 +69,7 @@ body, html {
     text-indent: 0px;  */
 }
 
-.input_window_scene_1 #message_input {
+.input_window_scene_1 #MessageInput {
     position: absolute;
     top: 421px;
     left: 393px;
@@ -109,36 +110,7 @@ body, html {
     box-sizing: border-box;
 }
 
-/* #target_3 {
-    position: absolute;
-    top: 660px;
-    left: 831px;
-    width: 62px;
-    height: 38px;
-    font-size: 16px;
-    z-index: 20; 
-    border: none;
-    padding: 10px; 
-    box-sizing: border-box;
-} */
-
-/* .anser_buttom {
-    position: absolute;
-    transform: translateX(-50%);
-    top: 80%;
-    left: 50%;
-    width: 60%;
-    height: 70px;
-    font-size: 16px;
-    z-index: 10; 
-    background: #D9D9D9; 
-    border: none;
-    padding: 10px; 
-    box-sizing: border-box;
-    text-indent: 0px; 
-} */
-
-#select_1 {
+#Select1 {
     position: absolute;
     top: 415px;
     left: 357px;
@@ -155,7 +127,7 @@ body, html {
     cursor: pointer;
 }
 
-#select_2 {
+#Select2 {
     position: absolute;
     top: 415px;
     left: 695px;
