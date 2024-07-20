@@ -83,6 +83,20 @@ body, html {
     text-indent: 0px; 
 }
 
+#message_input_button {
+    position: absolute;
+    top: 435px;
+    left: 831px;
+    width: 62px;
+    height: 38px;
+    font-size: 16px;
+    z-index: 20; 
+    background: rgb(197, 23, 23); 
+    border: none;
+    padding: 10px; 
+    box-sizing: border-box;
+}
+
 /* .anser_buttom {
     position: absolute;
     transform: translateX(-50%);

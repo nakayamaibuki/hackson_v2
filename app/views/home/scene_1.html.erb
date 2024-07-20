@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
-<%= stylesheet_link_tag 'scene_1', media: 'all', 'data-turbolinks-track': 'reload'%>
+
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= stylesheet_link_tag 'scene_1', media: 'all', 'data-turbolinks-track': 'reload'%>
     <title>恋愛面接</title>
 </head>
 
@@ -33,15 +34,26 @@
                 <button class="start_button" id="start_Button">はじめから</button>
             </form>
 
-            <form class="input_form" id="InputForm">
+            <%# <form class="input_form" id="InputForm">
                 <input id="message_input" placeholder='返答を記入してください'>
                 <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
+            </form> %>
+
+            <form action="/home/scene_1" method="post" id="InputForm", class="input_form" accept-charset="UTF-8" >
+                <input name="input_token" type="hidden" value="..." />
+                <input name="user_input_message[input]" id="message_input" placeholder='返答を記入してください' type="text" />
+                <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
+                
             </form>
+            <%# <input type="submit" name="commit" data-disable-with="Update Article"> %>
+
+            
 
             <form class="clicbutom" id="clicButton">
                 <button id="select_1">3回ノックする</button>
                 <button id="select_2">2回ノックする</button> 
-            </form>
+            </form>            
+
         </div>
     </div>
 
@@ -58,8 +70,10 @@
             const  start_button = document.getElementById('startbutton')
             const  input_txet = document.getElementById('InputForm') 
             const  input_button = document.getElementById('clicButton')
+            // start_button.style.visibility = 'hidden';
             start_button.style.visibility = 'visible';
             input_txet.style.visibility = 'hidden'; 
+            // input_txet.style.visibility = 'visible'; 
             input_button.style.visibility = 'hidden';
 
             // image配列
@@ -124,13 +138,13 @@
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
-                event.preventDefault();
                 scene_count++;
                 change_image(scene_count);
             });
 
             document.addEventListener('keydown', function (event) {
-                if (event.key === 'Enter') {
+                if (event.key === ' ') {
+                    // event.preventDefault();
                     scene_count = scene_count + 0.5;
                     change_image(scene_count);
                 }
@@ -156,7 +170,7 @@
                 }
 
                 Item.prototype.change_game_background = function (scene_count) {
-                    event.preventDefault();
+                    // event.preventDefault();
 
                     if (scene_count === 1) {
                         // 背景のPathを1へ
@@ -212,7 +226,7 @@
                 character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
 
                 Item.prototype.change_charcter_window = function (scene_count) {
-                    event.preventDefault();
+                    // event.preventDefault();
 
                     if (scene_count === 10) {
                         character_ctx.drawImage(character_img, 362, 70, 238, 228);
@@ -344,12 +358,38 @@
                     drawNextChar();
                 }
 
-                function simulateEnterKey() {
+                // function simulateEnterKey() {
+                //     const event = new KeyboardEvent('keydown', {
+                //         key: 'Enter',
+                //         keyCode: 13,
+                //         code: 'Enter',
+                //         which: 13,
+                //         shiftKey: false,
+                //         ctrlKey: false,
+                //         metaKey: false
+                //     });
+                //     document.dispatchEvent(event);
+                // }
+
+                // function simulateArrowRightKey() {
+                //     const event = new KeyboardEvent('keydown', {
+                //         key: 'ArrowRight',
+                //         keyCode: 39, // ArrowRight の keyCode
+                //         code: 'ArrowRight',
+                //         which: 39, // ArrowRight の which
+                //         shiftKey: false,
+                //         ctrlKey: false,
+                //         metaKey: false
+                //     });
+                //     document.dispatchEvent(event);
+                // }
+                
+                function simulateSpaceKey() {
                     const event = new KeyboardEvent('keydown', {
-                        key: 'Enter',
-                        keyCode: 13,
-                        code: 'Enter',
-                        which: 13,
+                        key: ' ', // スペースキーのキー値
+                        keyCode: 32, // スペースキーのキーコード
+                        code: 'Space', // スペースキーのコード
+                        which: 32, // スペースキーのwhich値
                         shiftKey: false,
                         ctrlKey: false,
                         metaKey: false
@@ -368,7 +408,7 @@
                     console.log('No more messages.');
                     }
                     if (enterFlag) {
-                        simulateEnterKey();
+                        simulateSpaceKey();
                     }
                 }  
 
@@ -391,7 +431,7 @@
                 // }
 
                 Item.prototype.change_message = function (scene_count) {
-                    event.preventDefault();
+                    // event.preventDefault();
                     // this._scene_count = scene_count;
 
                     if (scene_count === 1) {
@@ -425,17 +465,14 @@
                 input_window_canvas.height = input_window_canvas.offsetHeight;
 
                 Item.prototype.change_input_window = function (scene_count) {
-                    event.preventDefault();
+                    // event.preventDefault();
                     // this._scene_count = scene_count;
 
                     if (scene_count === 1) {
                         start_button.style.visibility = 'hidden';
-                        // input_button.style.visibility = 'visible';
                     }
                     else if (scene_count === 6) {
                         input_button.style.visibility = 'visible';
-                        // input_button.style.visibility = 'hidden';
-                        // input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 8) {
                         input_button.style.visibility = 'hidden';
@@ -443,13 +480,20 @@
                     }
                     else if (scene_count === 15 ) {
                         // input_button.style.visibility = 'hidden';
+                        // 15
+                        document.getElementById('message_input').value = "";
                         input_txet.style.visibility = 'visible';
                     }
                     else if (scene_count === 16 ) {
                         // input_button.style.visibility = 'hidden';
                         input_txet.style.visibility = 'hidden';
+                        // document.getElementById('message_input').value = "";
                     }
-                    // エンディングへ
+                    // else if (scene_count === 16 ) {
+                    //     // input_button.style.visibility = 'hidden';
+                    //     input_txet.style.visibility = 'hidden';
+                    // }
+                    // // エンディングへ
                     // else if (scene_count === 3) {
                     //     input_button.style.visibility = 'hidden';
                     //     input_txet.style.visibility = 'visible';
