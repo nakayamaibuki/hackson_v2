@@ -57,11 +57,11 @@
             </form> 
 
             <form id="FinishButton" class="finish_butom">
-                <input type="button" id="Finish" />
+                <input type="button" id="Finish" value="結果を見る" />
             </form>          
         </div>
 
-        <p id = 'target_1'> ああ</p>
+        <p id = 'target_1'> ああ</p>  
         <p id = 'target_2'> ああ</p>
         <p id = 'target_3'> ああ</p>
         <%# <p id = 'target_4'> ああ</p> %>
@@ -296,12 +296,23 @@
                 // vent.preventDefault();
                 if (start_Flag === true) {
                     if (event.key === ' ') {
-                        scene_count +=  0.5;
+                        if (scene_count === 34) {
+                            scene_count +=  1;
+                            change_canvas(scene_count);
+                            girl_face_number = 0;
+                            itemInstance.SceneCount(scene_count);
+                            itemInstance.ManaerPint(scene_count);
+                            itemInstance.GirlFaceNumber(scene_count);
+                        }
+                        else {
+                            scene_count +=  0.5;
                         change_canvas(scene_count);
                         girl_face_number = 0;
                         itemInstance.SceneCount(scene_count);
                         itemInstance.ManaerPint(scene_count);
                         itemInstance.GirlFaceNumber(scene_count);
+                        }
+                        
                         // start_Flag = false;
                     }
                 }
@@ -318,17 +329,7 @@
             });
 
             document.getElementById('Finish').addEventListener('click', () => {
-                //  localStorageを用いて他のファイルの変数を持ってきてgamescoreへ代入しています。
-                // $.ajax({
-                //     url: '/home/db',  
-                //     type: 'POST',
-                //     dataType: 'html',
-                //     async: true,
-                //     data: {
-                //     manner_point: manner_point,
-                //     },
-                // });
-                window.location.href = "/home/fb";
+                window.location.href = "http://127.0.0.1:5000/results";
             });
 
             Item.prototype.SceneCount = function (scene_count) {
@@ -463,14 +464,18 @@
                     //     setTimeout(500);
                     //     character_ctx.drawImage(character_img, 362, 70, 238, 228);
                     // }
-                    if (9 < scene_count) {
+                    if (9 < scene_count && scene_count < 34) {
                         var selectedGirlFaceImagePath = girl_face[girl_face_number];
                         drawCharacter(selectedGirlFaceImagePath);
                     }
                     // エンディングへ
-                    // else if (scene_count === 35) {
-                    //     character_ctx.clearRect(0, 0, 921, 519);
-                    // }
+                    else if (scene_count === 34) {
+                        // character_ctx.clearRect(0, 0, 921, 519);
+                        character_img.onload = function() {
+                            character_ctx.clearRect(0, 0, character_canvas.width, character_canvas.height);
+                            // character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                        }
+                    }
                 }
             }
 
@@ -629,13 +634,21 @@
                         
                         // simulateSpaceKey();
                     }
-                    else if (1 < scene_count) {
+                    else if (1 < scene_count && scene_count < 34) {
                         message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
                         message_window_ctx.drawImage(message_window_img, 201, 263);
                         
                         drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
                         Current_MessageIndex += 1;
                     }
+                    else if (34 < scene_count ) {
+                        message_window_ctx.clearRect(0, 0, message_window_canvas.width, message_window_canvas.height);
+                        // message_window_ctx.drawImage(message_window_img, 201, 263);
+                        
+                        // drawMessage(Current_MessageIndex, text_messages[Current_MessageIndex].name,text_messages[Current_MessageIndex].message);
+                        // Current_MessageIndex += 1;
+                    }
+
                     // // エンディングへ
                     // else if (scene_count === 20) {
                     // }

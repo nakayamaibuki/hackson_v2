@@ -170,4 +170,20 @@ body, html {
     cursor: pointer;
 }
 
+#Finish {
+    position: absolute;
+    top: 421px;
+    left: 393px;
+    width: 500px;
+    height: 67px;
+    font-size: 16px;
+    z-index: 10; 
+    background: rgba(238, 238, 238, 1); 
+    border: none;
+    padding: 10px; 
+    box-sizing: border-box;
+    text-indent: 0px; 
+}
+
+
 
