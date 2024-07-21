@@ -3,9 +3,12 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'home/title'
   get 'home/scene_2'
+  get 'home/fb'
   
   post 'home/scene_1', to: 'home#AddInput'
   post 'home/index', to: 'home#clear_datebase'
+  post 'home/fb', to: 'home#manner_point'
+  post 'home/q_id', to: 'home#AddQid'
   # post 'home/scene_1', to: 'home#SaveName'
   # post 'home/scene_1', to: 'home#clear_datebase'
 

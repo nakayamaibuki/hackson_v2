@@ -49,7 +49,11 @@
             <form id="ClicButton" class="clic_butom">
                 <input type="button" id="Select1" />
                 <input type="button" id="Select2" />
-            </form>        
+            </form> 
+
+            <form id="FinishButton" class="finish_butom">
+                <input type="button" id="Finish" />
+            </form>          
         </div>
 
         <p id = 'target_1'> ああ</p>
@@ -67,7 +71,7 @@
             var input_window_canvas = document.getElementById('InputWindowCanvas_scene_1');
             var scene_count = -1;
             var Current_MessageIndex = 0;
-            var manaer_point = 0;
+            var manner_point = 0;
             var girl_face_number = 0;
 
             var start_Flag = false;
@@ -76,7 +80,7 @@
             // 確認用
             var Sc = scene_count.toString();
             document.getElementById('target_1').textContent = Sc;
-            var Mp = manaer_point.toString();
+            var Mp = manner_point.toString();
             document.getElementById('target_2').textContent = Mp;
             var Gfn = girl_face_number.toString();
             document.getElementById('target_3').textContent = Gfn;
@@ -86,6 +90,7 @@
             const  start_button = document.getElementById('StartButtonForm')
             const  input_txet = document.getElementById('InputForm') 
             const  input_button = document.getElementById('ClicButton')
+            const  finish_button = document.getElementById('FinishButton')
             name_input.style.visibility = 'visible';
             // name_input.style.visibility = 'hideen';
             start_button.style.visibility = 'hidden';
@@ -93,6 +98,7 @@
             input_txet.style.visibility = 'hidden'; 
             // input_txet.style.visibility = 'visible'; 
             input_button.style.visibility = 'hidden';
+            finish_button.style.visibility = 'hidden';
 
             // image配列
             var girl_face = [
@@ -153,7 +159,7 @@
 
                 // 選択肢のチョイス
                 if (scene_count === 5){
-                    manaer_point += 2;
+                    manner_point += 2;
                     girl_face_number = 1;
                     // setTimeout(500);
                 }
@@ -162,12 +168,12 @@
                     Current_MessageIndex += 4;
                     girl_face_number = 2;
                     input_button.style.visibility = 'hidden';
-                    if (manaer_point > 2) {
-                        manaer_point -= 2;
+                    if (manner_point > 2) {
+                        manner_point -= 2;
                     }
                 }
                 if (scene_count === 30){        
-                    manaer_point += 3;
+                    manner_point += 3;
                     girl_face_number = 1;
                 }
 
@@ -180,33 +186,66 @@
 
             document.getElementById('Select2').addEventListener('click', function(event) {
                 event.preventDefault();
+                scene_count +=  1;
+                $.ajax({
+                    url: '/home/q_id',  
+                    type: 'POST',
+                    dataType: 'json',
+                    async: true,
+                    data: {
+                    q_id: 1,
+                    },
+                });
 
                 if (scene_count === 9){
-                    manaer_point += 2;
+                    manner_point += 2;
                     girl_face_number = 1;
                 }
                 else if (scene_count === 13){
-                    manaer_point += 3;
+                    manner_point += 3;
                     girl_face_number = 1;
                 }
                 else if (scene_count === 13){
-                    manaer_point += 3;
+                    manner_point += 3;
                     girl_face_number = 1;
                 }
                 else if (scene_count === 30){
-                    if (manaer_point > 1) {
-                        manaer_point -= 1;
+                    if (manner_point > 1) {
+                        manner_point -= 1;
                     }
                     girl_face_number = 2;
                 }
 
-                scene_count +=  1;
+                // scene_count +=  1;
                 start_Flag = false;
                 // setTimeout(500);
                 change_canvas(scene_count);
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
+                
+                // if (scene_count === 16){        
+                //     $.ajax({
+                //         url: '/home/q_id',  
+                //         type: 'POST',
+                //         dataType: 'html',
+                //         async: true,
+                //         data: {
+                //         q_id: 1,
+                //         },
+                //     });
+                // }
+
+                // $.ajax({
+                //     url: '/home/q_id',  
+                //     type: 'POST',
+                //     dataType: 'html',
+                //     async: true,
+                //     data: {
+                //     q_id: 1,
+                //     },
+                // });
+                
                 scene_count +=  1;
                 start_Flag = false;
                 // document.getElementById('message_input').value;
@@ -238,12 +277,26 @@
                 }
             });
 
+            document.getElementById('Finish').addEventListener('click', () => {
+                //  localStorageを用いて他のファイルの変数を持ってきてgamescoreへ代入しています。
+                $.ajax({
+                    url: '/home/db',  
+                    type: 'POST',
+                    dataType: 'html',
+                    async: true,
+                    data: {
+                    manner_point: manner_point,
+                    },
+                });
+                window.location.href = "/home/fb";
+            });
+
             Item.prototype.SceneCount = function (scene_count) {
                 Sc = scene_count.toString();
                 document.getElementById('target_1').textContent = Sc
             }
             Item.prototype.ManaerPint = function (scene_count) {
-                Mp = manaer_point.toString();
+                Mp = manner_point.toString();
                 document.getElementById('target_2').textContent = Mp
             }
             Item.prototype.GirlFaceNumber = function (scene_count) {
@@ -648,6 +701,11 @@
 
                     else if (scene_count === 31) {
                         input_button.style.visibility = 'hidden';
+                        // input_txet.style.visibility = 'visible';
+                    }
+
+                    else if (scene_count === 35) {
+                        finish_button.style.visibility = 'visible';
                         // input_txet.style.visibility = 'visible';
                     }
                     // else if (scene_count === 16 ) {
