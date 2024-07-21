@@ -23,3 +23,17 @@ test:
 production:
   <<: *default
   database: storage/production.sqlite3
+
+extend_db:
+  adapter: sqlite3
+  database: [Users]
+  host: [127.0.0.1]
+  # username: [extend_db_username]
+  # password: [extend_db_password]
+
+extend_input_db:
+  adapter: sqlite3
+  database: [Users]
+  host: [127.0.0.1]
+  # username: [extend_db_username]
+  # password: [extend_db_password]
