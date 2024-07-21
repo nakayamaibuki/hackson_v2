@@ -1,16 +1,80 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html la="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>メッセージ一覧</title>
+    <meta charset="UTF-8">
+    <title>hucksonapi</title>
 </head>
 <body>
-  <h1>メッセージ一覧</h1>
-  <ul>
-    <% @user_input_message.each do |message| %>
-      <li><%= message.input %></li> <!-- メッセージの内容を表示 -->
-    <% end %>
-  </ul>
+    <h1>huckapi</h1>
+    <div id = "questionSection">
+        <h2 id = "questionText"></h2>
+    </div>
+    </div>
+    <form id = "chatForm">
+        <label for="user_input">anser: </label>
+        <input type="text" id = "user_input" name="user_input">
+        <button type = "submit">send</button>
+    </form>
+    <div id = "chatResponse"></div>
+    <div id = "previousScoreSection">
+        <p><strong>前の質問:</strong> <span id = "previousScore"></span></p>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        fetch('/get_question')
+        .then(response => response.json())
+        .then(data => {
+            if (data.question) {
+                document.getElementById('questionText').innerText = data.question;
+            } else {
+                document.getElementById('questionText').innerText = 'No question to display';
+                window.location.href = '/results';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('questionText').innerText = 'An error occurred';
+        });
+    });
+    document.getElementById('chatForm').onsubmit = function(event) {
+        event.preventDefault();
+        const user_input = document.getElementById('user_input').value;
+
+        fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic' + btoa('admin:password')
+            },
+            body: new URLSearchParams({
+                'user_input': user_input
+            })
+        })
+        .then(respons => respons.json())
+        .then(data => {
+            document.getElementById('chatResponse').innerText = data.message;
+            document.getElementById('user_input').value = '';
+
+            document.getElementById('previousScore').innerText = data.previous_score;
+            if (data.finished) {
+                window.location.href = '/results';
+            } else {
+                fetch('/get_question')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.question) {
+                        document.getElementById('questionText').innerText = data.question;
+                    } else {
+                        document.getElementById('questionText').innerText = 'No question to display';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('questionText').innerText = 'An error occurred';
+                });
+            }
+        });
+    };
+</script>
 </body>
 </html>

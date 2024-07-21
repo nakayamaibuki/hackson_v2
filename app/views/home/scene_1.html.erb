@@ -2,9 +2,11 @@
 <html lang="ja">
 
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= csrf_meta_tags %>  <!-- CSRFトークンをmetaタグとして埋め込む -->
     <%= stylesheet_link_tag 'scene_1', media: 'all', 'data-turbolinks-track': 'reload'%>
     <title>恋愛面接</title>
 </head>
@@ -31,7 +33,7 @@
         <div class="input_window_scene_1">
 
             <form action="/home/index" method="post"  id="NameInputForm" class="name_input_form" accept-charset="UTF-8" >
-                <input name="input_token" type="hidden" value="..." />
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
                 <input name="user_input_name[username]" id="NameInput" placeholder='名前を入力してください' type="text" />
                 <canvas id="InputNameCanvas" width="921px" height="519px"></canvas>
             </form>
@@ -41,12 +43,15 @@
             </form>
 
             <form action="/home/scene_1" method="post" id="InputForm" class="input_form" accept-charset="UTF-8" >
-                <input name="input_token" type="hidden" value="..." />
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
                 <input name="user_input_message[input]" id="MessageInput" placeholder='返答を記入してください' type="text" />
+                <input name="user_input_message[q_id]" id="Q_id" type="hidden" value="{q_id の値}"/>
                 <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
             </form>
+            <%# data-turbo="ture" action="/home/scene_1" method="post" %>
 
             <form id="ClicButton" class="clic_butom">
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
                 <input type="button" id="Select1" />
                 <input type="button" id="Select2" />
             </form> 
@@ -59,10 +64,15 @@
         <p id = 'target_1'> ああ</p>
         <p id = 'target_2'> ああ</p>
         <p id = 'target_3'> ああ</p>
+        <%# <p id = 'target_4'> ああ</p> %>
     </div>
 
     <script>
+        //= require jquery
+        //= require jquery_ujs
         document.addEventListener('DOMContentLoaded', () => {
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
             var input_name_canvas = document.getElementById('InputNameCanvas');
             var background_canvas = document.getElementById('BackgroundCanvas');
             var game_background_canvas = document.getElementById('GameBackgroundCanvas');
@@ -84,6 +94,8 @@
             document.getElementById('target_2').textContent = Mp;
             var Gfn = girl_face_number.toString();
             document.getElementById('target_3').textContent = Gfn;
+
+            // document.getElementById('target_4').textContent = jQuery.fn.jquery;
 
             // 画面に下部の手動機構
             const  name_input = document.getElementById('NameInputForm')
@@ -186,16 +198,18 @@
 
             document.getElementById('Select2').addEventListener('click', function(event) {
                 event.preventDefault();
-                scene_count +=  1;
-                $.ajax({
-                    url: '/home/q_id',  
-                    type: 'POST',
-                    dataType: 'json',
-                    async: true,
-                    data: {
-                    q_id: 1,
-                    },
-                });
+                // scene_count +=  1;
+                // $( function() {
+                //     $.ajax({
+                //         url: '/home/q_id',  
+                //         type: 'POST',
+                //         dataType: 'html',
+                //         async: true,
+                //         data: {
+                //         q_id: "1",
+                //         },
+                //     });
+                // })
 
                 if (scene_count === 9){
                     manner_point += 2;
@@ -216,25 +230,77 @@
                     girl_face_number = 2;
                 }
 
-                // scene_count +=  1;
+                scene_count +=  1;
                 start_Flag = false;
                 // setTimeout(500);
                 change_canvas(scene_count);
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
-                
-                // if (scene_count === 16){        
+                // event.preventDefault();
+                console.log("イベント発火！") // 追加
+                // if (scene_count === 16){   
+                //     console.log("API 送信！") // 追加
                 //     $.ajax({
                 //         url: '/home/q_id',  
                 //         type: 'POST',
-                //         dataType: 'html',
+                //         dataType: 'json',
                 //         async: true,
                 //         data: {
-                //         q_id: 1,
+                //             q_id: 1,
                 //         },
                 //     });
                 // }
+                // $.ajax({
+                //     url: '/home/scene_1',  
+                //     type: 'POST',
+                //     dataType: 'json',
+                //     async: true,
+                //     data: {
+                //     // 必要なパラメータ
+                //     },
+                // });
+                
+                if (scene_count === 16){   
+                    // jQueryのAJAXを使用する場合（コメントアウトされた部分の修正）
+                    // $.ajax({
+                    //     url: '/home/q_id',
+                    //     type: 'POST',
+                    //     dataType: 'json',  // JSON形式でデータを受け取る
+                    //     data: {
+                    //         q_id: 1
+                    //     },
+                    //     success: function(response) {
+                    //         console.log('Success:', response);
+                    //     },
+                    //     error: function(jqXHR, textStatus, errorThrown) {
+                    //         console.error('Error:', textStatus, errorThrown);
+                    //     }
+                    // });
+
+                    // fetch("/home/q_id", {
+                    //     method: "POST",
+                    //     // headers: {
+                    //     //     'Content-Type': 'application/json'  // JSON形式でデータを送信
+                    //     //     // 'X-CSRF-Token': token,  // CSRFトークンをヘッダーに追
+                    //     // },
+                    //     body: JSON.stringify({
+                    //         q_id: 1
+                    //     })
+                    // })
+                    // .then(response => response.html())
+                    // .then(data => {
+                    //     console.log('Success:', data);
+                    //     // 成功時の処理
+                    // })
+                    // .catch(error => {
+                    //     console.error('Error:', error);
+                    //     // エラー時の処理
+                    // });
+                    // scene_count +=  1;
+
+                    document.getElementById('Q_id').value = "1"
+                }
 
                 // $.ajax({
                 //     url: '/home/q_id',  
@@ -279,15 +345,15 @@
 
             document.getElementById('Finish').addEventListener('click', () => {
                 //  localStorageを用いて他のファイルの変数を持ってきてgamescoreへ代入しています。
-                $.ajax({
-                    url: '/home/db',  
-                    type: 'POST',
-                    dataType: 'html',
-                    async: true,
-                    data: {
-                    manner_point: manner_point,
-                    },
-                });
+                // $.ajax({
+                //     url: '/home/db',  
+                //     type: 'POST',
+                //     dataType: 'html',
+                //     async: true,
+                //     data: {
+                //     manner_point: manner_point,
+                //     },
+                // });
                 window.location.href = "/home/fb";
             });
 
