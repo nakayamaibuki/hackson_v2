@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
   def scene_1
-    @user_input_message = Userinput.new
+    @user_input_message = Answer.new
   end
 
   def title
@@ -11,8 +11,11 @@ class HomeController < ApplicationController
 
   def AddInput
     # @user_input_message = Userinput.new(message_params)
-    @user_input_message = Userinput.new(message_params)
-    @user_input_message.update(name: @user_input_name)
+    @user_input_message = Answer.new(message_params)
+    # @user_input_message.update(username: @user_input_name)
+    # @user_input_message.username ||= @user_input_name
+    @user_input_name = Answer.last
+    @user_input_message.username = @user_input_name.username
     if @user_input_message.save
       flash[:success] = "ユーザを登録しました"
       # redirect_to @user_input_message
@@ -24,12 +27,13 @@ class HomeController < ApplicationController
   end
 
   def index
-    Userinput.all
+    Answer.all
   end
 
   def clear_datebase
-    Userinput.destroy_all
-    @user_input_name = Userinput.new(name_params)
+    Answer.destroy_all
+    @user_input_name = Answer.new(name_params)
+    # @user_input_message.id = "1"
     if @user_input_name.save
       flash[:success] = "ユーザを登録しました"
       # redirect_to @user_input_message
@@ -43,11 +47,11 @@ class HomeController < ApplicationController
   private
 
   def name_params
-    params.require(:user_input_name).permit(:input, :name)
+    params.require(:user_input_name).permit(:username, :input)
   end
 
   def message_params
-    params.require(:user_input_message).permit(:input, :name)
+    params.require(:user_input_message).permit(:username, :input)
   end
 
 end

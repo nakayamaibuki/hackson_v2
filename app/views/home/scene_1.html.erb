@@ -30,34 +30,31 @@
 
         <div class="input_window_scene_1">
 
-            <form action="/home/index" method="post"  id="NameInputForm", class="name_input_form" accept-charset="UTF-8" >
+            <form action="/home/index" method="post"  id="NameInputForm" class="name_input_form" accept-charset="UTF-8" >
                 <input name="input_token" type="hidden" value="..." />
-                <input name="user_input_name[name]" id="NameInput" placeholder='名前を入力してください' type="text" />
+                <input name="user_input_name[username]" id="NameInput" placeholder='名前を入力してください' type="text" />
                 <canvas id="InputNameCanvas" width="921px" height="519px"></canvas>
             </form>
-            <%# <input id="NameInput" placeholder='名前を入力してください' type="text" />
-            <canvas id="InputNameCanvas" width="921px" height="519px"></canvas> %>
 
             <form id = "StartButtonForm" class="start_button_form">
-                <input type="button" id="StartButton" value="はじめから"></button>
+                <input type="button" id="StartButton" value="はじめから" />
             </form>
 
-            <form action="/home/scene_1" method="post" id="InputForm", class="input_form" accept-charset="UTF-8" >
+            <form action="/home/scene_1" method="post" id="InputForm" class="input_form" accept-charset="UTF-8" >
                 <input name="input_token" type="hidden" value="..." />
                 <input name="user_input_message[input]" id="MessageInput" placeholder='返答を記入してください' type="text" />
                 <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas>
             </form>
-            <%# <input id="MessageInput" placeholder='返答を記入してください' type="text" />
-            <canvas id="InputWindowCanvas_scene_1" width="921px" height="519px"></canvas> %>
 
             <form id="ClicButton" class="clic_butom">
-                <input type="button" id="Select1" value=""></button>
-                <input type="button" id="Select2" value=""></button>
+                <input type="button" id="Select1" />
+                <input type="button" id="Select2" />
             </form>        
         </div>
 
         <p id = 'target_1'> ああ</p>
         <p id = 'target_2'> ああ</p>
+        <p id = 'target_3'> ああ</p>
     </div>
 
     <script>
@@ -70,6 +67,8 @@
             var input_window_canvas = document.getElementById('InputWindowCanvas_scene_1');
             var scene_count = -1;
             var Current_MessageIndex = 0;
+            var manaer_point = 0;
+            var girl_face_number = 0;
 
             var start_Flag = false;
             // var enterFlag = false;
@@ -77,8 +76,10 @@
             // 確認用
             var Sc = scene_count.toString();
             document.getElementById('target_1').textContent = Sc;
-            var Mi = Current_MessageIndex.toString();
-            document.getElementById('target_2').textContent = Mi;
+            var Mp = manaer_point.toString();
+            document.getElementById('target_2').textContent = Mp;
+            var Gfn = girl_face_number.toString();
+            document.getElementById('target_3').textContent = Gfn;
 
             // 画面に下部の手動機構
             const  name_input = document.getElementById('NameInputForm')
@@ -98,13 +99,13 @@
                             '<%= asset_path("/girl_normal.png") %>',
                             '<%= asset_path("/girl_smile.png") %>',
                             '<%= asset_path("/girl_angry.png") %>'
-            ];
+            ]
 
             var background_images = [
                                     '<%= asset_path("/title.png") %>',
                                     '<%= asset_path("/game_background_scene1.png") %>',
                                     '<%= asset_path("/game_background_scene2.png") %>',
-                                    '<%= asset_path("/ending_happy.png") %>',
+                                    '<%= asset_path("/ending_happy.png") %>'
             ]
 
             // 画像のPathを初期化
@@ -132,9 +133,11 @@
             document.getElementById('NameInputForm').addEventListener('submit', function(event) {
                 // event.preventDefault();
 
+                // setTimeout(1000);
                 scene_count =  0;
                 itemInstance.SceneCount(scene_count);
-                itemInstance.Messageindex(scene_count);
+                itemInstance.ManaerPint(scene_count);
+                itemInstance.GirlFaceNumber(scene_count);
                 change_canvas(scene_count);
             });
 
@@ -148,47 +151,62 @@
             document.getElementById('Select1').addEventListener('click', function(event) {
                 event.preventDefault();
 
-                // 選択肢のbadチョイス
+                // 選択肢のチョイス
+                if (scene_count === 5){
+                    manaer_point += 2;
+                    girl_face_number = 1;
+                    // setTimeout(500);
+                }
                 if (scene_count === 13){
                     scene_count += 2;
                     Current_MessageIndex += 4;
+                    girl_face_number = 2;
                     input_button.style.visibility = 'hidden';
+                    if (manaer_point > 2) {
+                        manaer_point -= 2;
+                    }
+                }
+                if (scene_count === 30){        
+                    manaer_point += 3;
+                    girl_face_number = 1;
                 }
 
                 scene_count +=  1;
                 start_Flag = false;
+                // setTimeout(500);
                 change_canvas(scene_count);
                 // start_Flag = false;
-
-                
             });
 
             document.getElementById('Select2').addEventListener('click', function(event) {
                 event.preventDefault();
 
+                if (scene_count === 9){
+                    manaer_point += 2;
+                    girl_face_number = 1;
+                }
+                else if (scene_count === 13){
+                    manaer_point += 3;
+                    girl_face_number = 1;
+                }
+                else if (scene_count === 13){
+                    manaer_point += 3;
+                    girl_face_number = 1;
+                }
+                else if (scene_count === 30){
+                    if (manaer_point > 1) {
+                        manaer_point -= 1;
+                    }
+                    girl_face_number = 2;
+                }
+
                 scene_count +=  1;
                 start_Flag = false;
+                // setTimeout(500);
                 change_canvas(scene_count);
             });
 
             document.getElementById('InputForm').addEventListener('submit', function(event) {
-                // データベースに保存
-                // const formData = new FormData();
-                // formData.append()
-                // // AJAXリクエストの送信
-                // fetch('/home/scene_1', {
-                //     method: 'POST',
-                //     body: formData
-                // })
-                // .then(response => response.text())
-                // .then(result => {
-                //     console.log('成功:', result);
-                //     // 必要に応じて、ページの遷移やUIの更新を行う
-                // })
-                // .catch(error => {
-                //     console.error('エラー:', error);
-                // });
-
                 scene_count +=  1;
                 start_Flag = false;
                 // document.getElementById('message_input').value;
@@ -201,16 +219,20 @@
                     if (event.key === ' ') {
                         scene_count +=  0.5;
                         change_canvas(scene_count);
+                        girl_face_number = 0;
                         itemInstance.SceneCount(scene_count);
-                        itemInstance.Messageindex(scene_count);
+                        itemInstance.ManaerPint(scene_count);
+                        itemInstance.GirlFaceNumber(scene_count);
                         // start_Flag = false;
                     }
                 }
                 else if (start_Flag === false) {
                     if (event.key === ' ') {
                         change_canvas(scene_count);
+                        girl_face_number = 0;
                         itemInstance.SceneCount(scene_count);
-                        itemInstance.Messageindex(scene_count);
+                        itemInstance.ManaerPint(scene_count);
+                        itemInstance.GirlFaceNumber(scene_count);
                         start_Flag = true;
                     }
                 }
@@ -220,10 +242,13 @@
                 Sc = scene_count.toString();
                 document.getElementById('target_1').textContent = Sc
             }
-
-            Item.prototype.Messageindex = function (scene_count) {
-                Mi = Current_MessageIndex.toString();
-                document.getElementById('target_2').textContent = Mi
+            Item.prototype.ManaerPint = function (scene_count) {
+                Mp = manaer_point.toString();
+                document.getElementById('target_2').textContent = Mp
+            }
+            Item.prototype.GirlFaceNumber = function (scene_count) {
+                Gfn = girl_face_number.toString();
+                document.getElementById('target_3').textContent = Gfn
             }
 
             if (background_canvas) {
@@ -297,25 +322,59 @@
                 // Canvasのサイズを設定
                 character_canvas.width = character_canvas.offsetWidth;
                 character_canvas.height = character_canvas.offsetHeight;
-                var character_img = new Image();
-                character_img.src = selectedGirlFaceImagePath;  // 背景画像のパスを指定
+                // var character_img = new Image(); // 背景画像のパスを指定
+                // selectedGirlFaceImagePath = girl_face[girl_face_number];
+                // character_img.src = selectedGirlFaceImagePath; 
+                // character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                var character_img = new Image(); // 背景画像のパスを指定
 
                 Item.prototype.change_charcter_window = function (scene_count) {
                     // event.preventDefault();
+                    
+                    // selectedGirlFaceImagePath = girl_face[girl_face_number];
+                    // character_img.src = selectedGirlFaceImagePath; 
 
-                    if (scene_count === 9) {
-                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    function drawCharacter(imagePath) {
+                        character_img.src = imagePath;
+                        character_img.onload = function() {
+                            character_ctx.clearRect(0, 0, character_canvas.width, character_canvas.height);
+                            character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                        }
                     }
-                    else if (9 < scene_count && scene_count < 34) {
-                        character_ctx.clearRect(0, 0, 921, 519);
-                        // 一旦ランダム
-                        randomNumber = Math.floor(Math.random() * (3));
 
-                        selectedGirlFaceImagePath = girl_face[randomNumber];
-                        character_img.src = selectedGirlFaceImagePath; 
-                        character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    
+                    // if (scene_count === 2) {
+                    //     // character_ctx.clearRect(0, 0, 921, 519);
+                    //     var selectedGirlFaceImagePath = girl_face[girl_face_number];
+                    //     drawCharacter(selectedGirlFaceImagePath);
+                        
+                    //     // character_img.src = selectedGirlFaceImagePath; 
+                    //     // character_ctx.drawImage(character_img);
+                    // }
+                    // else if (scene_count === 3) {
+                    //     character_ctx.clearRect(0, 0, 921, 519);
+                    // }
+                    // else if (scene_count === 6) {
+                    //     // character_ctx.clearRect(0, 0, 921, 519);
+                    //     // selectedGirlFaceImagePath = girl_face[girl_face_number];
+                    //     // character_img.src = selectedGirlFaceImagePath; 
+                    //     // character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    //     var selectedGirlFaceImagePath = girl_face[girl_face_number];
+                    //     drawCharacter(selectedGirlFaceImagePath);
+                    // }
+                    // if (scene_count === 10) {
+                    //     // var character_img = new Image(); // 背景画像のパスを指定
+                    //     var number = girl_face_number
+                    //     selectedGirlFaceImagePath = girl_face[number];
+                    //     character_img.src = selectedGirlFaceImagePath; 
+                    //     setTimeout(500);
+                    //     character_ctx.drawImage(character_img, 362, 70, 238, 228);
+                    // }
+                    if (9 < scene_count) {
+                        var selectedGirlFaceImagePath = girl_face[girl_face_number];
+                        drawCharacter(selectedGirlFaceImagePath);
                     }
-                    // // エンディングへ
+                    // エンディングへ
                     // else if (scene_count === 35) {
                     //     character_ctx.clearRect(0, 0, 921, 519);
                     // }
