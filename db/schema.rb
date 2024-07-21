@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_21_005951) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_21_044817) do
   create_table "answers", force: :cascade do |t|
     t.string "username", default: "no"
     t.string "input", default: "no"
@@ -20,10 +20,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_21_005951) do
     t.integer "q_id"
   end
 
-  create_table "textdbs", force: :cascade do |t|
-    t.text "content"
+  create_table "application_external_records", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "userinputs", force: :cascade do |t|
+    t.string "input"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
   end
 
 end
